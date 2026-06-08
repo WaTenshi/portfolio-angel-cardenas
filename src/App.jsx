@@ -72,7 +72,7 @@ const copy = {
       status: "Full Stack · Concepción, Chile",
     },
     stats: [
-      ["3", "roles profesionales"],
+      ["4", "roles profesionales"],
       ["6", "proyectos destacados"],
       ["2", "plataformas · web + mobile"],
       ["360°", "visión de producto"],
@@ -96,7 +96,7 @@ const copy = {
       ["Idiomas", "Español nativo · Inglés técnico"],
       ["Método", "Producto, diseño, código y mejora continua"],
     ],
-    experienceMeta: "NOV 2024 → PRESENTE · 3 ROLES",
+    experienceMeta: "NOV 2024 → PRESENTE · 4 ROLES",
     relation: "Experiencia profesional",
     current: "Actualidad",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
@@ -148,7 +148,7 @@ const copy = {
       status: "Full Stack · Concepción, Chile",
     },
     stats: [
-      ["3", "professional roles"],
+      ["4", "professional roles"],
       ["6", "featured projects"],
       ["2", "platforms · web + mobile"],
       ["360°", "product perspective"],
@@ -172,7 +172,7 @@ const copy = {
       ["Languages", "Native Spanish · Technical English"],
       ["Method", "Product, design, code, and continuous improvement"],
     ],
-    experienceMeta: "NOV 2024 → PRESENT · 3 ROLES",
+    experienceMeta: "NOV 2024 → PRESENT · 4 ROLES",
     relation: "Professional experience",
     current: "Present",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
@@ -210,7 +210,7 @@ const experience = [
     company: "Instituto Grupo Crexer",
     dates: { es: "May 2026 — Actualidad", en: "May 2026 — Present" },
     role: "Full Stack Developer / Webmaster",
-    place: "Concepción · Media jornada",
+    place: { es: "Concepción · Híbrido · Media jornada", en: "Concepción · Hybrid · Part-time" },
     points: {
       es: [
         "Gestión del desarrollo Full Stack, soporte TI y plataformas institucionales en producción.",
@@ -243,6 +243,25 @@ const experience = [
       ],
     },
     tags: ["React", "React Native", "TypeScript", "Supabase", "Sentry"],
+  },
+  {
+    company: "Econofertas",
+    dates: { es: "Feb 2026", en: "Feb 2026" },
+    role: { es: "Analista de datos", en: "Data Analyst" },
+    place: { es: "Concepción · Híbrido · Contrato temporal", en: "Concepción · Hybrid · Temporary contract" },
+    points: {
+      es: [
+        "Gestión y análisis de datos mediante el software ERP Odoo.",
+        "Integración masiva de datos desde Excel utilizando procesos automatizados con Python.",
+        "Extracción, transformación y limpieza de datos con Python y Pandas.",
+      ],
+      en: [
+        "Data management and analysis using the Odoo ERP platform.",
+        "Bulk Excel data integration through automated processes built with Python.",
+        "Data extraction, transformation, and cleaning with Python and Pandas.",
+      ],
+    },
+    tags: ["Odoo", "Python", "Pandas", "Excel", "Data Cleaning"],
   },
   {
     company: "Aula Educa Limitada",
@@ -652,10 +671,13 @@ function App() {
           <div className="experience-list">
             {experience.map((job, index) => (
               <article className={index === 0 ? "experience-card featured" : "experience-card"} key={job.company}>
-                <div className="experience-date"><b>{job.dates[language]}</b><span>{job.place}</span></div>
+                <div className="experience-date">
+                  <b>{job.dates[language]}</b>
+                  <span>{typeof job.place === "string" ? job.place : job.place[language]}</span>
+                </div>
                 <div className="experience-content">
                   <h3>{job.company}</h3>
-                  <h4>{job.role}</h4>
+                  <h4>{typeof job.role === "string" ? job.role : job.role[language]}</h4>
                   <ul>{job.points[language].map((point) => <li key={point}>{point}</li>)}</ul>
                   <div className="tag-list">{job.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
                 </div>
