@@ -1,13 +1,16 @@
-import { createElement, useEffect, useState } from "react";
+import { createElement, useEffect, useRef, useState } from "react";
 import {
   FiArrowDown,
   FiArrowUpRight,
   FiAward,
+  FiCode,
   FiGithub,
   FiGlobe,
   FiLinkedin,
   FiMenu,
   FiMoon,
+  FiPause,
+  FiPlay,
   FiSend,
   FiSun,
   FiX,
@@ -35,25 +38,31 @@ import {
   SiTypescript,
 } from "react-icons/si";
 import "./App.css";
+import Reveal from "./components/Reveal";
+import CertificateModal from "./components/CertificateModal";
+import { useMotion } from "./hooks/useMotion";
+import { useSitePreferences } from "./hooks/useSitePreferences";
+import BlogFab from "./components/BlogFab";
+import images from "./assets/optimized/images";
 
-import profile from "./assets/profile.jpg";
+const profile = images.profile;
 import terminalCertificate from "./assets/1752023569576.jpg";
 import aiSeminarCertificate from "./assets/1764267414745.jpg";
 import coderCertificate from "./assets/coderhouse-certificate.jpg";
 import dataBootcampCertificate from "./assets/Certificado - Bootcamp de Ciencia de Datos.pdf";
 import dataFoundationsCertificate from "./assets/Certificado - Curso de Bases y conceptos de la Ciencia de Datos.pdf";
 import dataScientistCertificate from "./assets/Certificado - Qué hace un científico de datos - Bootcamp de ciencia de datos.pdf";
-import journalFitPreview from "./assets/projects/journalfit.jpg";
-import weddingPreview from "./assets/projects/boda.jpg";
-import certificatesPreview from "./assets/projects/certificados.png";
-import psychologyPreview from "./assets/projects/consultora.jpg";
-import salonPreview from "./assets/projects/peluqueria.jpg";
-import videoPreview from "./assets/projects/video-player.jpg";
+const journalFitPreview = images.journalfit;
+const weddingPreview = images.boda;
+const certificatesPreview = images.certificados;
+const psychologyPreview = images.consultora;
+const salonPreview = images.peluqueria;
+const videoPreview = images.video;
 
 const copy = {
   es: {
-    nav: ["Sobre mí", "Experiencia", "Tecnologías", "Proyectos", "Certificados", "Contacto"],
-    navIds: ["about", "experience", "stack", "projects", "certificates", "contact"],
+    nav: ["Proyectos", "Experiencia", "Sobre mí", "Tecnologías", "Certificados", "Contacto"],
+    navIds: ["projects", "experience", "about", "stack", "certificates", "contact"],
     role: "Full Stack Developer",
     location: "Concepción, Chile",
     intro:
@@ -66,25 +75,25 @@ const copy = {
     profileLabel: "PERFIL / 2026",
     live: "DISPONIBLE",
     profileCard: {
-      eyebrow: "Diseño + ingeniería",
+      eyebrow: "Diseño",
       title: "Ideas que llegan a producción.",
       areas: ["Web apps", "Mobile", "SaaS", "UX/UI"],
       status: "Full Stack · Concepción, Chile",
     },
     stats: [
-      ["4", "roles profesionales"],
-      ["6", "proyectos destacados"],
+      ["5", "roles profesionales"],
+      ["5", "proyectos destacados"],
       ["2", "plataformas · web + mobile"],
       ["360°", "visión de producto"],
     ],
     section: {
-      about: ["01 / SOBRE MÍ", "Código con criterio de producto.", "No me interesa construir pantallas aisladas. Diseño sistemas completos que sean claros para las personas y sostenibles para los equipos."],
+      about: ["03 / SOBRE MÍ", "Código con criterio de producto.", "No me interesa construir pantallas aisladas. Diseño sistemas completos que sean claros para las personas y sostenibles para los equipos."],
       experience: ["02 / EXPERIENCIA", "Trayectoria profesional.", "Productos SaaS, plataformas educativas y operación tecnológica en entornos reales."],
-      stack: ["03 / STACK", "Tecnología con propósito.", "Herramientas utilizadas en proyectos reales, organizadas por el problema que resuelven."],
-      projects: ["04 / PROYECTOS", "Trabajo seleccionado.", "JournalFit encabeza una colección de productos y experiencias digitales ordenada desde lo más reciente."],
+      stack: ["04 / STACK", "Tecnología con propósito.", "Herramientas utilizadas en proyectos reales, organizadas por el problema que resuelven."],
+      projects: ["01 / PROYECTOS", "Trabajo seleccionado.", "JournalFit encabeza una colección de productos y experiencias digitales ordenada desde lo más reciente."],
       certificates: ["05 / CERTIFICADOS", "Aprendizaje que se convierte en práctica.", "Formación aplicada en desarrollo móvil, inteligencia artificial y ciencia de datos."],
       figma: ["06 / FIGMA", "Diseño en proceso.", "Espacio preparado para sumar casos de UX/UI, sistemas visuales y prototipos."],
-      contact: ["07 / CONTACTO", "Construyamos algo útil.", "Estoy abierto a conversar sobre productos, equipos y desafíos donde diseño y desarrollo deban trabajar juntos."],
+      contact: ["06 / CONTACTO", "Construyamos algo útil.", "Estoy abierto a conversar sobre productos, equipos y desafíos donde diseño y desarrollo deban trabajar juntos."],
     },
     aboutText: [
       "Soy Full Stack Developer y Técnico Universitario en Informática. He trabajado construyendo aplicaciones móviles, plataformas educativas, CMS y productos SaaS, conectando frontend, backend, bases de datos y despliegue.",
@@ -96,9 +105,24 @@ const copy = {
       ["Idiomas", "Español nativo · Inglés técnico"],
       ["Método", "Producto, diseño, código y mejora continua"],
     ],
-    experienceMeta: "NOV 2024 → PRESENTE · 4 ROLES",
+    experienceMeta: "NOV 2024 → PRESENTE · 5 ROLES",
     relation: "Experiencia profesional",
     current: "Actualidad",
+    selected: "Ideas en acción / 2022 — 2026",
+    explore: "Explora mi trabajo",
+    skip: "Saltar al contenido",
+    navigation: "Navegación principal",
+    menu: "Abrir menú",
+    closeMenu: "Cerrar menú",
+    motion: "Animaciones",
+    motionOn: "Pausar animaciones",
+    motionOff: "Activar animaciones",
+    motionReduced: "Movimiento reducido por tu sistema",
+    lightTheme: "Activar tema claro",
+    darkTheme: "Activar tema oscuro",
+    backTop: "Volver arriba",
+    projectPreview: "Vista previa de",
+    items: "herramientas",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
     projectActions: { live: "Visitar sitio" },
     projectStatus: { active: "En desarrollo" },
@@ -128,8 +152,8 @@ const copy = {
     footer: "Diseñado y desarrollado por Ángel Cárdenas.",
   },
   en: {
-    nav: ["About", "Experience", "Technologies", "Projects", "Certificates", "Contact"],
-    navIds: ["about", "experience", "stack", "projects", "certificates", "contact"],
+    nav: ["Projects", "Experience", "About", "Technologies", "Certificates", "Contact"],
+    navIds: ["projects", "experience", "about", "stack", "certificates", "contact"],
     role: "Full Stack Developer",
     location: "Concepción, Chile",
     intro:
@@ -142,25 +166,25 @@ const copy = {
     profileLabel: "PROFILE / 2026",
     live: "AVAILABLE",
     profileCard: {
-      eyebrow: "Design + engineering",
+      eyebrow: "Design",
       title: "Ideas shipped to production.",
       areas: ["Web apps", "Mobile", "SaaS", "UX/UI"],
       status: "Full Stack · Concepción, Chile",
     },
     stats: [
-      ["4", "professional roles"],
-      ["6", "featured projects"],
+      ["5", "professional roles"],
+      ["5", "featured projects"],
       ["2", "platforms · web + mobile"],
       ["360°", "product perspective"],
     ],
     section: {
-      about: ["01 / ABOUT", "Code guided by product thinking.", "I do not build isolated screens. I design complete systems that are clear for people and sustainable for teams."],
+      about: ["03 / ABOUT", "Code guided by product thinking.", "I do not build isolated screens. I design complete systems that are clear for people and sustainable for teams."],
       experience: ["02 / EXPERIENCE", "Professional journey.", "SaaS products, education platforms, and technology operations in real environments."],
-      stack: ["03 / STACK", "Technology with purpose.", "Tools used in real projects, organized by the problems they solve."],
-      projects: ["04 / PROJECTS", "Selected work.", "JournalFit leads a collection of digital products and experiences ordered from newest to oldest."],
+      stack: ["04 / STACK", "Technology with purpose.", "Tools used in real projects, organized by the problems they solve."],
+      projects: ["01 / PROJECTS", "Selected work.", "JournalFit leads a collection of digital products and experiences ordered from newest to oldest."],
       certificates: ["05 / CERTIFICATES", "Learning turned into practice.", "Applied training in mobile development, artificial intelligence, and data science."],
       figma: ["06 / FIGMA", "Design in progress.", "A prepared space for UX/UI case studies, visual systems, and prototypes."],
-      contact: ["07 / CONTACT", "Let’s build something useful.", "I am open to discussing products, teams, and challenges where design and development need to work together."],
+      contact: ["06 / CONTACT", "Let’s build something useful.", "I am open to discussing products, teams, and challenges where design and development need to work together."],
     },
     aboutText: [
       "I am a Full Stack Developer and University Technician in Computer Science. I have built mobile applications, education platforms, CMS products, and SaaS solutions connecting frontend, backend, databases, and deployment.",
@@ -172,9 +196,24 @@ const copy = {
       ["Languages", "Native Spanish · Technical English"],
       ["Method", "Product, design, code, and continuous improvement"],
     ],
-    experienceMeta: "NOV 2024 → PRESENT · 4 ROLES",
+    experienceMeta: "NOV 2024 → PRESENT · 5 ROLES",
     relation: "Professional experience",
     current: "Present",
+    selected: "Ideas in motion / 2022 — 2026",
+    explore: "Explore my work",
+    skip: "Skip to content",
+    navigation: "Main navigation",
+    menu: "Open menu",
+    closeMenu: "Close menu",
+    motion: "Animations",
+    motionOn: "Pause animations",
+    motionOff: "Enable animations",
+    motionReduced: "Reduced motion enabled by your system",
+    lightTheme: "Enable light theme",
+    darkTheme: "Enable dark theme",
+    backTop: "Back to top",
+    projectPreview: "Preview of",
+    items: "tools",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
     projectActions: { live: "Visit website" },
     projectStatus: { active: "In development" },
@@ -208,6 +247,7 @@ const copy = {
 const experience = [
   {
     company: "Instituto Grupo Crexer",
+    current: true,
     dates: { es: "May 2026 — Actualidad", en: "May 2026 — Present" },
     role: "Full Stack Developer / Webmaster",
     place: { es: "Concepción · Híbrido · Media jornada", en: "Concepción · Hybrid · Part-time" },
@@ -224,6 +264,26 @@ const experience = [
       ],
     },
     tags: ["PHP", "MySQL", "REST API", "Apache", "Moodle"],
+  },
+  {
+    company: "FACEA UdeC",
+    current: true,
+    dates: { es: "Jul 2026 — Actualidad", en: "Jul 2026 — Present" },
+    role: "IT Department Assistant and Educational Software Developer",
+    place: { es: "Concepción, Biobío, Chile · Remoto · Jornada parcial", en: "Concepción, Biobío, Chile · Remote · Part-time" },
+    points: {
+      es: [
+        "Mantenimiento y desarrollo de software contable educativo con PHP y MySQL: mejoras funcionales, corrección de errores, gestión de bases de datos y asistencia a usuarios.",
+        "Administración operativa de Moodle para docentes de FACEA UdeC: publicación de materiales, configuración de cursos, matriculación de usuarios, monitoreo y resolución de incidencias.",
+        "Tutoría y apoyo técnico en cursos y diplomados presenciales, orientando a docentes y participantes en el uso de plataformas digitales, herramientas tecnológicas y recursos académicos.",
+      ],
+      en: [
+        "Maintenance and development of educational accounting software with PHP and MySQL, including functional improvements, bug fixes, database management, and user support.",
+        "Operational administration of Moodle for FACEA UdeC faculty: publishing materials, configuring courses, enrolling users, monitoring the platform, and resolving incidents.",
+        "Tutoring and technical support for in-person courses and diploma programs, guiding faculty and participants in the use of digital platforms, technology tools, and academic resources.",
+      ],
+    },
+    tags: ["PHP", "MySQL", "Moodle"],
   },
   {
     company: "AYMatch",
@@ -353,6 +413,7 @@ const projects = [
     number: "03",
     title: "Susana Riquelme Peluquería",
     date: "Jun 2026",
+    status: "active",
     image: salonPreview,
     description: {
       es: "Landing editorial para peluquería, enfocada en identidad visual, servicios, marcas y experiencia responsive.",
@@ -389,6 +450,7 @@ const projects = [
     number: "06",
     title: "Video Player Tenshi",
     date: "Oct 2022",
+    hidden: true,
     image: videoPreview,
     description: {
       es: "Reproductor de video personalizado creado con JavaScript vanilla, controles propios y una identidad visual experimental.",
@@ -397,7 +459,7 @@ const projects = [
     tags: ["HTML", "CSS", "JavaScript"],
     live: "https://watenshi.github.io/video-player-uwu/",
   },
-];
+].filter((project) => !project.hidden);
 
 const certificates = [
   {
@@ -483,360 +545,197 @@ const certificates = [
   },
 ];
 
+// Future Figma cases remain in copy; enable this section when real cases are available.
+const showFigma = false;
+
 function SectionHeader({ content }) {
   return (
-    <div className="section-heading">
+    <Reveal className="section-heading">
       <span className="section-kicker"><i />{content[0]}</span>
       <h2>{content[1]}</h2>
       <p>{content[2]}</p>
-    </div>
+    </Reveal>
   );
 }
 
 function App() {
-  const [language, setLanguage] = useState(() => localStorage.getItem("language") || "es");
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
-  );
+  const { language, setLanguage, theme, setTheme } = useSitePreferences();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("about");
+  const [activeSection, setActiveSection] = useState("home");
   const [modalCertificate, setModalCertificate] = useState(null);
+  const certificateTrigger = useRef(null);
+  const { enabled, reduced, toggleMotion, scrollBehavior } = useMotion();
   const t = copy[language];
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    localStorage.setItem("language", language);
-  }, [language]);
 
   useEffect(() => {
     const target = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get("view");
     if (!target) return;
-    const timer = window.setTimeout(() => document.getElementById(target)?.scrollIntoView(), 800);
-    return () => window.clearTimeout(timer);
+    // Wait for local fonts so deep links land at their final layout position.
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (!cancelled) document.getElementById(target)?.scrollIntoView({ behavior: "instant" });
+    });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
-    if (!modalCertificate) return undefined;
-    const previousOverflow = document.body.style.overflow;
-    const closeOnEscape = (event) => {
-      if (event.key === "Escape") setModalCertificate(null);
-    };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [modalCertificate]);
-
-  useEffect(() => {
-    const sections = t.navIds.map((id) => document.getElementById(id)).filter(Boolean);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const current = entries.find((entry) => entry.isIntersecting);
-        if (current) setActiveSection(current.target.id);
-      },
-      { rootMargin: "-30% 0px -60%", threshold: 0 },
-    );
+    if (!("IntersectionObserver" in window)) return;
+    const sections = ["home", ...t.navIds].map((id) => document.getElementById(id)).filter(Boolean);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) setActiveSection(entry.target.id); });
+    }, { rootMargin: "-15% 0px -70%", threshold: 0 });
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, [t.navIds]);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (event) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        document.querySelector(".menu-button")?.focus();
+      }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [menuOpen]);
+
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior });
     setMenuOpen(false);
+  };
+
+  const navigate = (event, id) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    window.history.replaceState(null, "", `#${id}`);
+    scrollTo(id);
+  };
+
+  const openCertificate = (certificate, event) => {
+    certificateTrigger.current = event.currentTarget;
+    setModalCertificate(certificate);
+  };
+
+  const closeCertificate = () => {
+    setModalCertificate(null);
+    requestAnimationFrame(() => certificateTrigger.current?.focus({ preventScroll: true }));
   };
 
   const handleContact = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const recipient = String.fromCharCode(
-      97, 110, 103, 101, 108, 46, 97, 98, 97, 114, 122, 117, 97, 49, 53, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109,
-    );
-    const name = data.get("name");
-    const email = data.get("email");
-    const subject = data.get("subject");
-    const message = data.get("message");
-    const body = `${language === "es" ? "Nombre" : "Name"}: ${name}\nEmail: ${email}\n\n${message}`;
-    window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const recipient = String.fromCharCode(97,110,103,101,108,46,97,98,97,114,122,117,97,49,53,64,103,109,97,105,108,46,99,111,109);
+    const body = `${language === "es" ? "Nombre" : "Name"}: ${data.get("name")}\nEmail: ${data.get("email")}\n\n${data.get("message")}`;
+    window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(data.get("subject"))}&body=${encodeURIComponent(body)}`;
   };
 
   return (
-    <div className="site-shell">
+    <div className="site-shell portfolio-shell">
+      <a className="skip-link" href="#main">{t.skip}</a>
+      <div className="ambient-background" aria-hidden="true"><div className="ambient-shape shape-one ambient-loop" /><div className="ambient-shape shape-two ambient-loop" /></div>
       <header className="site-header">
         <div className="header-inner">
-          <button className="brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <span className="brand-mark">AC</span>
-            <span className="brand-name">Ángel Cárdenas</span>
-            <span className="brand-role">/ full stack</span>
-          </button>
-
-          <nav className={menuOpen ? "main-nav is-open" : "main-nav"} aria-label="Main navigation">
+          <a className="brand" href="#home" onClick={(event) => navigate(event, "home")} aria-label={`Ángel Cárdenas · ${t.backTop}`}><span className="brand-mark">ac<span>®</span></span></a>
+          <nav id="main-nav" className={menuOpen ? "main-nav is-open" : "main-nav"} aria-label={t.navigation}>
             {t.nav.map((item, index) => (
-              <button
-                key={t.navIds[index]}
-                className={activeSection === t.navIds[index] ? "active" : ""}
-                onClick={() => scrollTo(t.navIds[index])}
-              >
-                {item}
-              </button>
+              <a key={t.navIds[index]} href={`#${t.navIds[index]}`} aria-current={activeSection === t.navIds[index] ? "location" : undefined} onClick={(event) => navigate(event, t.navIds[index])}>{item}</a>
             ))}
           </nav>
-
           <div className="header-actions">
-            <button className="utility-button language-button" onClick={() => setLanguage(language === "es" ? "en" : "es")}>
-              {language === "es" ? "EN" : "ES"}
-            </button>
-            <button
-              className="utility-button"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label={theme === "dark" ? "Light mode" : "Dark mode"}
-            >
-              {theme === "dark" ? <FiSun /> : <FiMoon />}
-            </button>
-            <button className="menu-button utility-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
-              {menuOpen ? <FiX /> : <FiMenu />}
-            </button>
+            <button className="utility-button language-button" onClick={() => setLanguage(language === "es" ? "en" : "es")} aria-label={language === "es" ? "Switch to English" : "Cambiar a español"}>{language === "es" ? "EN" : "ES"}</button>
+            <button className="utility-button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? t.lightTheme : t.darkTheme} title={theme === "dark" ? t.lightTheme : t.darkTheme}>{theme === "dark" ? <FiSun /> : <FiMoon />}</button>
+            <button className="utility-button motion-button" onClick={toggleMotion} aria-label={reduced ? t.motionReduced : enabled ? t.motionOn : t.motionOff} aria-pressed={!enabled} disabled={reduced} title={reduced ? t.motionReduced : enabled ? t.motionOn : t.motionOff}>{enabled ? <FiPause /> : <FiPlay />}</button>
+            <button className="menu-button utility-button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? t.closeMenu : t.menu} aria-expanded={menuOpen} aria-controls="main-nav">{menuOpen ? <FiX /> : <FiMenu />}</button>
           </div>
         </div>
       </header>
 
-      <main>
-        <section className="hero" id="home">
-          <div className="hero-copy">
-            <div className="availability"><span />{t.available}</div>
-            <h1><span>Ángel</span><em>Cárdenas.</em></h1>
-            <p className="hero-intro">{t.intro}</p>
-            <p className="hero-muted">{t.introMuted}</p>
-            <div className="hero-actions">
-              <button className="primary-button" onClick={() => scrollTo("projects")}>{t.viewProjects}<FiArrowUpRight /></button>
-              <button className="text-button" onClick={() => scrollTo("contact")}>{t.contact}</button>
+      <main id="main" tabIndex={-1}>
+        <section className="hero" id="home" data-motion-region>
+          <div className="hero-topline"><span><i className="status-dot ambient-loop" />{t.available}</span><span>{t.profileLabel}</span></div>
+          <div className="hero-layout">
+            <div className="hero-copy">
+              <span className="hero-role">{t.role}<span className="role-line" /></span>
+              <h1><span>Ángel</span><em>Cárdenas<span className="name-period">.</span></em></h1>
+              <Reveal delay={80} className="hero-description"><p className="hero-intro">{t.intro}</p><p className="hero-muted">{t.introMuted}</p></Reveal>
+              <Reveal delay={160} className="hero-actions"><a className="primary-button" href="#projects" onClick={(event) => navigate(event, "projects")}>{t.viewProjects}<FiArrowUpRight /></a><a className="text-button" href="#contact" onClick={(event) => navigate(event, "contact")}>{t.contact}<span>↗</span></a></Reveal>
             </div>
-            <div className="social-row">
-              <a href="https://github.com/WaTenshi" target="_blank" rel="noreferrer" aria-label="GitHub"><FiGithub /></a>
-              <a href="https://www.linkedin.com/in/angel-cardenas-abarzua" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a>
-            </div>
+            <aside className="profile-stage">
+              <div className="profile-orbit orbit-one ambient-loop" aria-hidden="true"><i /></div>
+              <div className="profile-orbit orbit-two ambient-loop" aria-hidden="true"><i /></div>
+              <div className="portrait-frame"><div className="profile-photo ambient-loop"><img src={profile.src} srcSet={profile.srcSet} sizes="(max-width: 600px) 260px, (max-width: 1050px) 300px, 360px" width={profile.width} height={profile.height} fetchPriority="high" alt="Ángel Cárdenas Abarzúa" /></div></div>
+              <span className="portrait-cross" aria-hidden="true"><FiCode /></span>
+              <span className="portrait-coordinate" aria-hidden="true">36°49′ S / 73°03′ W</span>
+              <div className="profile-caption"><span>{t.profileCard.eyebrow}</span><p>{t.profileCard.title}</p></div>
+              <div className="social-row"><a href="https://github.com/WaTenshi" target="_blank" rel="noreferrer" aria-label="GitHub"><FiGithub /></a><a href="https://www.linkedin.com/in/angel-cardenas-abarzua-0a7380290/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a><span>{t.location}</span></div>
+            </aside>
           </div>
+          <div className="hero-bottom"><a className="scroll-cue" href="#projects" onClick={(event) => navigate(event, "projects")}><FiArrowDown className="ambient-loop" />{t.explore}</a><div className="hero-areas">{t.profileCard.areas.map((area) => <span key={area}>{area}</span>)}</div></div>
+          <div className="hero-stats">{t.stats.map(([value, label]) => <div className="stat" key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
+        </section>
 
-          <aside className="profile-stage">
-            <div className="profile-orbit orbit-one" />
-            <div className="profile-orbit orbit-two" />
-            <div className="profile-stage-top">
-              <span>{t.profileLabel}</span>
-              <b><i />{t.live}</b>
-            </div>
-            <div className="profile-visual">
-              <div className="profile-photo"><img src={profile} alt="Ángel Cárdenas Abarzúa" /></div>
-              <span className="floating-code">&lt;/&gt;</span>
-              <span className="floating-dot dot-one" />
-              <span className="floating-dot dot-two" />
-            </div>
-            <div className="profile-card-copy">
-              <span>{t.profileCard.eyebrow}</span>
-              <h2>{t.profileCard.title}</h2>
-              <div className="profile-areas">{t.profileCard.areas.map((area) => <i key={area}>{area}</i>)}</div>
-              <p>{t.profileCard.status}</p>
-            </div>
-          </aside>
-
-          <div className="hero-stats">
-            {t.stats.map(([value, label], index) => (
-              <div className="stat" key={label}><strong>{value}{index === 1 && <sup>+</sup>}</strong><span>{label}</span></div>
+        <section className="content-section projects-section" id="projects">
+          <div className="heading-with-meta"><SectionHeader content={t.section.projects} /><span className="section-side-note">{t.selected}<FiArrowDown /></span></div>
+          <div className="projects-grid">
+            {projects.map((project, index) => (
+              <Reveal key={project.title} delay={index * 80} className={`project-slot project-slot-${index + 1}`}>
+                <article className="project-card">
+                  <a className="project-visual" href={project.live} target="_blank" rel="noreferrer" aria-label={`${t.projectActions.live}: ${project.title}`}>
+                    <div className="project-visual-top"><span>{project.number} / {project.tags[0]}</span><FiArrowUpRight /></div>
+                    <div className="project-browser"><div className="browser-bar"><i /><i /><i /><span>{project.title}</span></div><img src={project.image.src} srcSet={project.image.srcSet} sizes={index === 0 ? "(max-width: 780px) calc(100vw - 40px), 720px" : "(max-width: 780px) calc(100vw - 40px), (max-width: 1050px) 50vw, 700px"} width={project.image.width} height={project.image.height} loading="lazy" decoding="async" alt={`${t.projectPreview} ${project.title}`} /></div>
+                  </a>
+                  <div className="project-body"><div className="project-index"><span>{project.date}</span>{project.status && <span className="project-status">{t.projectStatus[project.status]}</span>}</div><h3>{project.title}</h3><p>{project.description[language]}</p><div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><a className="project-link" href={project.live} target="_blank" rel="noreferrer">{t.projectActions.live}<FiArrowUpRight /></a></div>
+                </article>
+              </Reveal>
             ))}
           </div>
-          <button className="scroll-cue" onClick={() => scrollTo("about")} aria-label="Scroll"><FiArrowDown /></button>
+        </section>
+
+        <section className="content-section experience-section" id="experience">
+          <div className="heading-with-meta"><SectionHeader content={t.section.experience} /><span className="section-side-note">{t.experienceMeta}</span></div>
+          <div className="experience-list">
+            {experience.map((job, index) => (
+              <Reveal key={job.company} delay={index * 80}>
+                <article className={job.current ? "experience-card featured" : "experience-card"} data-motion-region>
+                  <div className="experience-date"><span className="experience-number">0{index + 1}</span><b>{job.dates[language]}</b><span>{typeof job.place === "string" ? job.place : job.place[language]}</span>{job.current && <span className="current-label"><i className="status-dot ambient-loop" />{t.current}</span>}</div>
+                  <div className="experience-content"><h3>{job.company}</h3><h4>{typeof job.role === "string" ? job.role : job.role[language]}</h4><ul>{job.points[language].map((point) => <li key={point}>{point}</li>)}</ul><div className="tag-list">{job.tags.map((tag) => <span key={tag}>{tag}</span>)}</div></div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
         </section>
 
         <section className="content-section about-section" id="about">
           <SectionHeader content={t.section.about} />
-          <div className="about-grid">
-            <div className="about-copy">{t.aboutText.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
-            <dl className="about-list">
-              {t.aboutDetails.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
-            </dl>
-          </div>
-        </section>
-
-        <section className="content-section" id="experience">
-          <div className="heading-with-meta">
-            <SectionHeader content={t.section.experience} />
-            <span>{t.experienceMeta}</span>
-          </div>
-          <div className="experience-label">{t.relation}</div>
-          <div className="experience-list">
-            {experience.map((job, index) => (
-              <article className={index === 0 ? "experience-card featured" : "experience-card"} key={job.company}>
-                <div className="experience-date">
-                  <b>{job.dates[language]}</b>
-                  <span>{typeof job.place === "string" ? job.place : job.place[language]}</span>
-                </div>
-                <div className="experience-content">
-                  <h3>{job.company}</h3>
-                  <h4>{typeof job.role === "string" ? job.role : job.role[language]}</h4>
-                  <ul>{job.points[language].map((point) => <li key={point}>{point}</li>)}</ul>
-                  <div className="tag-list">{job.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <div className="about-grid"><Reveal className="about-copy">{t.aboutText.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</Reveal><Reveal delay={80}><dl className="about-list">{t.aboutDetails.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></Reveal></div>
         </section>
 
         <section className="content-section" id="stack">
           <SectionHeader content={t.section.stack} />
-          <div className="stack-groups">
-            {stackGroups.map((group, groupIndex) => (
-              <div className="stack-group" key={t.stackGroups[groupIndex]}>
-                <div className="stack-title"><h3>{t.stackGroups[groupIndex]}</h3><span>{group.items.length} ITEMS</span></div>
-                <div className="stack-grid">
-                  {group.items.map(([name, icon]) => <div className="tech-card" key={name}>{createElement(icon)}<span>{name}</span></div>)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="content-section projects-section" id="projects">
-          <SectionHeader content={t.section.projects} />
-          <div className="projects-grid">
-            {projects.map((project) => (
-              <article className="project-card" key={project.title}>
-                <div className="project-browser"><div className="browser-bar"><i /><i /><i /><span>{project.title.toLowerCase().replaceAll(" ", "-")}</span></div><img src={project.image} alt="" /></div>
-                <div className="project-body">
-                  <div className="project-index">
-                    <span># {project.number}</span>
-                    <span>{project.status && <i className="project-status">{t.projectStatus[project.status]}</i>}{project.date}</span>
-                  </div>
-                  <h3>{project.title}</h3>
-                  <p>{project.description[language]}</p>
-                  <div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                  <div className="project-links">
-                    {project.live && <a href={project.live} target="_blank" rel="noreferrer">{t.projectActions.live}<FiArrowUpRight /></a>}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <div className="stack-groups">{stackGroups.map((group, index) => <Reveal key={t.stackGroups[index]} delay={index * 80} className="stack-group"><div className="stack-title"><span>0{index + 1}</span><h3>{t.stackGroups[index]}</h3><small>{group.items.length} {t.items}</small></div><div className="stack-grid">{group.items.map(([name, icon]) => <div className="tech-card" key={name}>{createElement(icon)}<span>{name}</span></div>)}</div></Reveal>)}</div>
         </section>
 
         <section className="content-section certificates-section" id="certificates">
           <SectionHeader content={t.section.certificates} />
-          <div className="certificates-featured">
-            {certificates.filter((certificate) => certificate.featured).map((certificate) => (
-              <article className="certificate-card" key={certificate.title}>
-                <div className="certificate-top">
-                  <span>{certificate.number}</span>
-                  <FiAward />
-                </div>
-                <div className="certificate-meta">
-                  <span>{t.certificateLabels.featured}</span>
-                  <i>{certificate.date}</i>
-                </div>
-                <h3>{certificate.title}</h3>
-                <h4>{certificate.issuer}</h4>
-                <p>{certificate.description[language]}</p>
-                <div className="certificate-skills">
-                  <strong>{t.certificateLabels.skills}</strong>
-                  <div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div>
-                </div>
-                <button className="certificate-link" type="button" onClick={() => setModalCertificate(certificate)}>
-                  {t.certificateLabels.view}<FiArrowUpRight />
-                </button>
-              </article>
-            ))}
-          </div>
-
-          <div className="certificates-secondary">
-            {certificates.filter((certificate) => !certificate.featured).map((certificate) => (
-              <article className="certificate-row" key={certificate.title}>
-                <div className="certificate-row-number">{certificate.number}</div>
-                <div className="certificate-row-copy">
-                  <span>{t.certificateLabels.complementary} · {certificate.date}</span>
-                  <h3>{certificate.title}</h3>
-                  <h4>{certificate.issuer}</h4>
-                  <p>{certificate.description[language]}</p>
-                  <div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div>
-                </div>
-                <button type="button" onClick={() => setModalCertificate(certificate)} aria-label={`${t.certificateLabels.view}: ${certificate.title}`}>
-                  <FiArrowUpRight />
-                </button>
-              </article>
-            ))}
-          </div>
+          <div className="certificates-featured">{certificates.filter((certificate) => certificate.featured).map((certificate, index) => (
+            <Reveal key={certificate.title} delay={index * 80}><article className="certificate-card"><div className="certificate-top"><span>{certificate.number}</span><FiAward /></div><div className="certificate-meta"><span>{t.certificateLabels.featured}</span><span>{certificate.date}</span></div><h3>{certificate.title}</h3><h4>{certificate.issuer}</h4><p>{certificate.description[language]}</p><div className="certificate-skills"><strong>{t.certificateLabels.skills}</strong><div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></div><button className="certificate-link" type="button" onClick={(event) => openCertificate(certificate, event)}>{t.certificateLabels.view}<FiArrowUpRight /></button></article></Reveal>
+          ))}</div>
+          <div className="certificates-secondary">{certificates.filter((certificate) => !certificate.featured).map((certificate, index) => (
+            <Reveal key={certificate.title} delay={index * 80}><article className="certificate-row"><div className="certificate-row-number">{certificate.number}</div><div className="certificate-row-copy"><span>{t.certificateLabels.complementary} · {certificate.date}</span><h3>{certificate.title}</h3><h4>{certificate.issuer}</h4><p>{certificate.description[language]}</p><div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></div><button type="button" onClick={(event) => openCertificate(certificate, event)} aria-label={`${t.certificateLabels.view}: ${certificate.title}`}><FiArrowUpRight /></button></article></Reveal>
+          ))}</div>
         </section>
 
-        <section className="content-section figma-section" id="figma">
-          <SectionHeader content={t.section.figma} />
-          <div className="figma-grid">
-            {[1, 2, 3].map((item) => (
-              <article className="figma-card" key={item}>
-                <div className="figma-preview"><SiFigma /><span>0{item}</span></div>
-                <span className="figma-soon">{t.figmaSoon}</span>
-                <h3>{t.figmaTitle} 0{item}</h3>
-                <p>{t.figmaText}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        {showFigma && <section className="content-section figma-section" id="figma"><SectionHeader content={t.section.figma} /><div className="figma-grid">{[1,2,3].map((item) => <article className="figma-card" key={item}><SiFigma /><span>{t.figmaSoon}</span><h3>{t.figmaTitle} 0{item}</h3><p>{t.figmaText}</p></article>)}</div></section>}
 
         <section className="content-section contact-section" id="contact">
           <SectionHeader content={t.section.contact} />
-          <div className="contact-grid">
-            <form className="contact-form" onSubmit={handleContact}>
-              <div className="form-row">
-                <label><span>{t.contactForm.name}</span><input name="name" required placeholder={t.contactForm.namePlaceholder} /></label>
-                <label><span>{t.contactForm.email}</span><input name="email" type="email" required placeholder={t.contactForm.emailPlaceholder} /></label>
-              </div>
-              <label><span>{t.contactForm.subject}</span><input name="subject" required placeholder={t.contactForm.subjectPlaceholder} /></label>
-              <label><span>{t.contactForm.message}</span><textarea name="message" required rows="6" placeholder={t.contactForm.messagePlaceholder} /></label>
-              <div className="form-footer">
-                <button type="submit">{t.contactForm.send}<FiSend /></button>
-                <small>{t.contactForm.hint}</small>
-              </div>
-            </form>
-            <a className="linkedin-card" href="https://www.linkedin.com/in/angel-cardenas-abarzua" target="_blank" rel="noreferrer">
-              <FiLinkedin />
-              <span>{t.contactForm.linkedin}</span>
-              <FiArrowUpRight />
-            </a>
-          </div>
+          <div className="contact-grid"><Reveal><form className="contact-form" onSubmit={handleContact}><div className="form-row"><label><span>{t.contactForm.name}</span><input name="name" autoComplete="name" required placeholder={t.contactForm.namePlaceholder} /></label><label><span>{t.contactForm.email}</span><input name="email" autoComplete="email" type="email" required placeholder={t.contactForm.emailPlaceholder} /></label></div><label><span>{t.contactForm.subject}</span><input name="subject" required placeholder={t.contactForm.subjectPlaceholder} /></label><label><span>{t.contactForm.message}</span><textarea name="message" required rows="5" placeholder={t.contactForm.messagePlaceholder} /></label><div className="form-footer"><button type="submit">{t.contactForm.send}<FiSend /></button><small>{t.contactForm.hint}</small></div></form></Reveal><Reveal delay={80}><a className="linkedin-card" href="https://www.linkedin.com/in/angel-cardenas-abarzua-0a7380290/" target="_blank" rel="noreferrer"><FiLinkedin /><span>{t.contactForm.linkedin}</span><FiArrowUpRight /></a></Reveal></div>
         </section>
       </main>
-
-      <footer><span>© {new Date().getFullYear()} Ángel Cárdenas</span><span>{t.footer}</span><button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>↑ TOP</button></footer>
-
-      {modalCertificate && (
-        <div className="certificate-modal-backdrop" role="presentation" onMouseDown={() => setModalCertificate(null)}>
-          <section
-            className="certificate-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="certificate-modal-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <header>
-              <div>
-                <span>{modalCertificate.issuer} · {modalCertificate.date}</span>
-                <h2 id="certificate-modal-title">{modalCertificate.title}</h2>
-              </div>
-              <button type="button" onClick={() => setModalCertificate(null)} aria-label={t.certificateLabels.close}>
-                <FiX />
-              </button>
-            </header>
-            <div className={`certificate-viewer ${modalCertificate.mediaType === "image" ? "is-image" : "is-pdf"}`}>
-              {modalCertificate.mediaType === "image" ? (
-                <img src={modalCertificate.file} alt={`${modalCertificate.title} — ${modalCertificate.issuer}`} />
-              ) : (
-                <iframe src={`${modalCertificate.file}#toolbar=0&navpanes=0`} title={modalCertificate.title} />
-              )}
-            </div>
-          </section>
-        </div>
-      )}
+      <footer><a className="footer-brand" href="#home" onClick={(event) => navigate(event, "home")}>Ángel Cárdenas<span>®</span></a><div className="footer-bottom"><span>© {new Date().getFullYear()} · {t.footer}</span><a href="#home" onClick={(event) => navigate(event, "home")}>{t.backTop}<FiArrowUpRight /></a></div></footer>
+      <BlogFab language={language} />
+      {modalCertificate && <CertificateModal certificate={modalCertificate} labels={t.certificateLabels} onClose={closeCertificate} />}
     </div>
   );
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "del-codigo-a-la-realidad",
+    "title": "Del código a la realidad: lo que aprendí trabajando con usuarios reales",
+    "description": "Una reflexión sobre cómo cambia el desarrollo cuando una funcionalidad deja de ser una prueba y comienza a formar parte del trabajo diario de otras personas.",
+    "author": "Ángel Cárdenas",
+    "date": "2026-07-14",
+    "category": "Desarrollo de software",
+    "tags": ["Producción", "Usuarios", "Soporte", "JavaScript"],
+    "language": "es",
+    "featured": true,
+    "coverImage": {
+      "src": "blog/assets/code-to-reality.svg",
+      "alt": "Un documento escaneado a color se transforma a blanco y negro para continuar su procesamiento.",
+      "width": 1200,
+      "height": 780
+    },
+    "contentFile": "del-codigo-a-la-realidad.md"
+  }
+]

@@ -1,0 +1,16 @@
+/* Reveals only hide after observer setup; focus always exposes interactive content. */
+[data-motion="on"] .motion-ready[data-reveal]:not(.is-revealed):not(:focus-within) { opacity: 0; transform: translateY(var(--reveal-distance)); }
+[data-motion="on"] .motion-ready[data-reveal] { transition: opacity 500ms ease var(--reveal-delay, 0ms), transform 500ms cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms); }
+.ambient-loop { animation-play-state: paused !important; }
+[data-motion="on"][data-page-visible="true"] .ambient-background .ambient-loop,
+[data-motion="on"][data-page-visible="true"] [data-motion-region][data-in-view="true"] .ambient-loop { animation-play-state: running !important; }
+
+/* OS preference always wins; paused content remains fully visible and usable. */
+html[data-motion="off"] { scroll-behavior: auto; }
+[data-motion="off"] *, [data-motion="off"] *::before, [data-motion="off"] *::after { animation: none !important; transition: none !important; }
+[data-page-visible="false"] *, [data-page-visible="false"] *::before, [data-page-visible="false"] *::after { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+}

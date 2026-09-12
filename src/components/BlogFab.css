@@ -1,0 +1,12 @@
+.blog-fab-region { position: fixed; right: max(24px, env(safe-area-inset-right)); bottom: calc(24px + env(safe-area-inset-bottom) + var(--keyboard-inset, 0px)); z-index: 90; }
+.blog-fab { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 20px; border: 1px solid var(--accent); border-radius: 30px; background: var(--bg); color: var(--accent); box-shadow: 0 8px 25px #0002; font: 12px "IBM Plex Mono", monospace; transition: transform 180ms ease; }
+.blog-fab:hover, .blog-fab:focus-visible { transform: translateY(-4px); background: var(--accent); color: var(--bg); }
+.blog-fab > svg { width: 18px; height: 18px; animation-name: fab-float; animation-duration: 5s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+:where(.portfolio-shell) footer { padding-bottom: 95px; }
+:where(.portfolio-shell) input, :where(.portfolio-shell) textarea, :where(.portfolio-shell) button { scroll-margin-bottom: 100px; }
+@keyframes fab-float { 50% { transform: translateY(-3px); } }
+@media (max-width: 780px) {
+  .blog-fab-region { right: max(12px, env(safe-area-inset-right)); bottom: calc(16px + env(safe-area-inset-bottom) + var(--keyboard-inset, 0px)); }
+  .blog-fab { width: 48px; min-height: 48px; padding: 0; justify-content: center; }
+  .blog-fab > span { display: none; }
+}
