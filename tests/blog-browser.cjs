@@ -17,7 +17,10 @@ fs.mkdirSync(output, { recursive: true });
   try {
     assert.equal((await page.goto(url)).status(), 200);
     await page.locator('.blog-fab').waitFor();
-    assert.equal(await page.locator('.project-card').count(), 5);
+    assert.equal(await page.locator('.project-card').count(), 6);
+    assert.deepEqual(await page.locator('.project-group-clients h4').allTextContents(), ['Susana Riquelme Peluquería', 'Calzados Paula']);
+    assert.deepEqual(await page.locator('.project-group-clients .project-link').evaluateAll(links => links.map(link => link.href)), ['https://susanariquelmepeluqueria.cl/', 'https://calzadospaula.cl/']);
+    assert.deepEqual(await page.locator('.project-group-personal h4').allTextContents(), ['JournalFit', 'Consultora Psicológica', 'Sistema de Certificados', 'Invitación de boda']);
     assert.deepEqual(await page.locator('.featured h3').allTextContents(), ['Instituto Grupo Crexer', 'FACEA UdeC']);
     assert(!requests.some(request => /ArticlePage-|del-codigo-a-la-realidad-/.test(request)), 'portfolio should not download Markdown or its renderer');
     await page.locator('.blog-fab').click();

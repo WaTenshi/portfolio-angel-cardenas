@@ -3,6 +3,7 @@ import {
   FiArrowDown,
   FiArrowUpRight,
   FiAward,
+  FiBookOpen,
   FiCode,
   FiGithub,
   FiGlobe,
@@ -43,6 +44,7 @@ import CertificateModal from "./components/CertificateModal";
 import { useMotion } from "./hooks/useMotion";
 import { useSitePreferences } from "./hooks/useSitePreferences";
 import BlogFab from "./components/BlogFab";
+import { blogPath } from "./blog/paths";
 import images from "./assets/optimized/images";
 
 const profile = images.profile;
@@ -82,7 +84,7 @@ const copy = {
     },
     stats: [
       ["5", "roles profesionales"],
-      ["5", "proyectos destacados"],
+      ["6", "proyectos destacados"],
       ["2", "plataformas · web + mobile"],
       ["360°", "visión de producto"],
     ],
@@ -90,7 +92,7 @@ const copy = {
       about: ["03 / SOBRE MÍ", "Código con criterio de producto.", "No me interesa construir pantallas aisladas. Diseño sistemas completos que sean claros para las personas y sostenibles para los equipos."],
       experience: ["02 / EXPERIENCIA", "Trayectoria profesional.", "Productos SaaS, plataformas educativas y operación tecnológica en entornos reales."],
       stack: ["04 / STACK", "Tecnología con propósito.", "Herramientas utilizadas en proyectos reales, organizadas por el problema que resuelven."],
-      projects: ["01 / PROYECTOS", "Trabajo seleccionado.", "JournalFit encabeza una colección de productos y experiencias digitales ordenada desde lo más reciente."],
+      projects: ["01 / PROYECTOS", "Trabajo seleccionado.", "Trabajo para clientes y proyectos propios: dos formas de llevar ideas a la web."],
       certificates: ["05 / CERTIFICADOS", "Aprendizaje que se convierte en práctica.", "Formación aplicada en desarrollo móvil, inteligencia artificial y ciencia de datos."],
       figma: ["06 / FIGMA", "Diseño en proceso.", "Espacio preparado para sumar casos de UX/UI, sistemas visuales y prototipos."],
       contact: ["06 / CONTACTO", "Construyamos algo útil.", "Estoy abierto a conversar sobre productos, equipos y desafíos donde diseño y desarrollo deban trabajar juntos."],
@@ -125,13 +127,23 @@ const copy = {
     items: "herramientas",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
     projectActions: { live: "Visitar sitio" },
-    projectStatus: { active: "En desarrollo" },
+    projectStatus: { active: "En desarrollo", production: "En producción" },
+    projectGroups: {
+      clients: { title: "Clientes · En producción", description: "Sitios creados para clientes, publicados y en uso." },
+      personal: { title: "Proyectos propios", description: "Por curiosidad, por aprender y por amor al arte. Ideas que convierto en proyectos." },
+    },
     certificateLabels: {
       featured: "Certificado principal",
       complementary: "Formación complementaria",
       view: "Ver certificado",
       skills: "Habilidades desarrolladas",
       close: "Cerrar certificado",
+    },
+    blogPromo: {
+      label: "NOTAS / BLOG",
+      title: "También escribo sobre lo que construyo.",
+      description: "Ideas, procesos y aprendizajes detrás de cada proyecto.",
+      action: "Explorar el blog",
     },
     figmaSoon: "PRÓXIMAMENTE",
     figmaTitle: "Caso de diseño",
@@ -173,7 +185,7 @@ const copy = {
     },
     stats: [
       ["5", "professional roles"],
-      ["5", "featured projects"],
+      ["6", "featured projects"],
       ["2", "platforms · web + mobile"],
       ["360°", "product perspective"],
     ],
@@ -181,7 +193,7 @@ const copy = {
       about: ["03 / ABOUT", "Code guided by product thinking.", "I do not build isolated screens. I design complete systems that are clear for people and sustainable for teams."],
       experience: ["02 / EXPERIENCE", "Professional journey.", "SaaS products, education platforms, and technology operations in real environments."],
       stack: ["04 / STACK", "Technology with purpose.", "Tools used in real projects, organized by the problems they solve."],
-      projects: ["01 / PROJECTS", "Selected work.", "JournalFit leads a collection of digital products and experiences ordered from newest to oldest."],
+      projects: ["01 / PROJECTS", "Selected work.", "Client work and personal projects: two ways to bring ideas to the web."],
       certificates: ["05 / CERTIFICATES", "Learning turned into practice.", "Applied training in mobile development, artificial intelligence, and data science."],
       figma: ["06 / FIGMA", "Design in progress.", "A prepared space for UX/UI case studies, visual systems, and prototypes."],
       contact: ["06 / CONTACT", "Let’s build something useful.", "I am open to discussing products, teams, and challenges where design and development need to work together."],
@@ -216,13 +228,23 @@ const copy = {
     items: "tools",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
     projectActions: { live: "Visit website" },
-    projectStatus: { active: "In development" },
+    projectStatus: { active: "In development", production: "In production" },
+    projectGroups: {
+      clients: { title: "Clients · In production", description: "Websites built for clients, published and in use." },
+      personal: { title: "Personal projects", description: "For curiosity, for learning, and for the love of creating. Ideas I turn into projects." },
+    },
     certificateLabels: {
       featured: "Featured certificate",
       complementary: "Complementary training",
       view: "View certificate",
       skills: "Skills developed",
       close: "Close certificate",
+    },
+    blogPromo: {
+      label: "NOTES / BLOG",
+      title: "I also write about what I build.",
+      description: "Ideas, processes, and lessons behind each project.",
+      action: "Explore the blog",
     },
     figmaSoon: "COMING SOON",
     figmaTitle: "Design case study",
@@ -412,15 +434,28 @@ const projects = [
   {
     number: "03",
     title: "Susana Riquelme Peluquería",
+    category: "clients",
     date: "Jun 2026",
-    status: "active",
+    status: "production",
     image: salonPreview,
     description: {
       es: "Landing editorial para peluquería, enfocada en identidad visual, servicios, marcas y experiencia responsive.",
       en: "Editorial salon landing page focused on visual identity, services, brands, and responsive experience.",
     },
     tags: ["React", "TypeScript", "Vite", "Responsive"],
-    live: "https://watenshi.github.io/susanariquelme-peluqueria/",
+    live: "https://susanariquelmepeluqueria.cl",
+  },
+  {
+    title: "Calzados Paula",
+    category: "clients",
+    status: "production",
+    image: images.calzadospaula,
+    description: {
+      es: "Sitio web para Calzados Paula, con una presentación de la marca y su colección de calzado.",
+      en: "Website for Calzados Paula, presenting the brand and its footwear collection.",
+    },
+    tags: ["Web", "Responsive"],
+    live: "https://calzadospaula.cl",
   },
   {
     number: "04",
@@ -668,7 +703,7 @@ function App() {
               <span className="portrait-cross" aria-hidden="true"><FiCode /></span>
               <span className="portrait-coordinate" aria-hidden="true">36°49′ S / 73°03′ W</span>
               <div className="profile-caption"><span>{t.profileCard.eyebrow}</span><p>{t.profileCard.title}</p></div>
-              <div className="social-row"><a href="https://github.com/WaTenshi" target="_blank" rel="noreferrer" aria-label="GitHub"><FiGithub /></a><a href="https://www.linkedin.com/in/angel-cardenas-abarzua-0a7380290/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a><span>{t.location}</span></div>
+              <div className="social-row"><a href="https://www.linkedin.com/in/angel-cardenas-abarzua-0a7380290/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FiLinkedin /></a><span>{t.location}</span></div>
             </aside>
           </div>
           <div className="hero-bottom"><a className="scroll-cue" href="#projects" onClick={(event) => navigate(event, "projects")}><FiArrowDown className="ambient-loop" />{t.explore}</a><div className="hero-areas">{t.profileCard.areas.map((area) => <span key={area}>{area}</span>)}</div></div>
@@ -677,19 +712,27 @@ function App() {
 
         <section className="content-section projects-section" id="projects">
           <div className="heading-with-meta"><SectionHeader content={t.section.projects} /><span className="section-side-note">{t.selected}<FiArrowDown /></span></div>
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <Reveal key={project.title} delay={index * 80} className={`project-slot project-slot-${index + 1}`}>
-                <article className="project-card">
-                  <a className="project-visual" href={project.live} target="_blank" rel="noreferrer" aria-label={`${t.projectActions.live}: ${project.title}`}>
-                    <div className="project-visual-top"><span>{project.number} / {project.tags[0]}</span><FiArrowUpRight /></div>
-                    <div className="project-browser"><div className="browser-bar"><i /><i /><i /><span>{project.title}</span></div><img src={project.image.src} srcSet={project.image.srcSet} sizes={index === 0 ? "(max-width: 780px) calc(100vw - 40px), 720px" : "(max-width: 780px) calc(100vw - 40px), (max-width: 1050px) 50vw, 700px"} width={project.image.width} height={project.image.height} loading="lazy" decoding="async" alt={`${t.projectPreview} ${project.title}`} /></div>
-                  </a>
-                  <div className="project-body"><div className="project-index"><span>{project.date}</span>{project.status && <span className="project-status">{t.projectStatus[project.status]}</span>}</div><h3>{project.title}</h3><p>{project.description[language]}</p><div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><a className="project-link" href={project.live} target="_blank" rel="noreferrer">{t.projectActions.live}<FiArrowUpRight /></a></div>
-                </article>
+          {["clients", "personal"].map((group) => (
+            <section className={`project-group project-group-${group}`} key={group} aria-labelledby={`projects-${group}-title`}>
+              <Reveal className="project-group-heading">
+                <h3 id={`projects-${group}-title`}>{t.projectGroups[group].title}</h3>
+                <p>{t.projectGroups[group].description}</p>
               </Reveal>
-            ))}
-          </div>
+              <div className="projects-grid">
+                {projects.filter((project) => (project.category || "personal") === group).map((project, index) => (
+                  <Reveal key={project.title} delay={index * 80} className="project-slot">
+                    <article className="project-card">
+                      <a className="project-visual" href={project.live} target="_blank" rel="noreferrer" aria-label={`${t.projectActions.live}: ${project.title}`}>
+                        <div className="project-visual-top"><span>{String(index + 1).padStart(2, "0")} / {project.tags[0]}</span><FiArrowUpRight /></div>
+                        <div className="project-browser"><div className="browser-bar"><i /><i /><i /><span>{project.title}</span></div><img src={project.image.src} srcSet={project.image.srcSet} sizes="(max-width: 780px) calc(100vw - 80px), (max-width: 1336px) calc(50vw - 112px), 556px" width={project.image.width} height={project.image.height} loading="lazy" decoding="async" alt={`${t.projectPreview} ${project.title}`} /></div>
+                      </a>
+                      <div className="project-body"><div className="project-index"><span>{group === "clients" ? new URL(project.live).hostname : project.date}</span>{project.status && <span className="project-status">{t.projectStatus[project.status]}</span>}</div><h4>{project.title}</h4><p>{project.description[language]}</p><div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><a className="project-link" href={project.live} target="_blank" rel="noreferrer">{t.projectActions.live}<FiArrowUpRight /></a></div>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
+            </section>
+          ))}
         </section>
 
         <section className="content-section experience-section" id="experience">
@@ -727,6 +770,18 @@ function App() {
         </section>
 
         {showFigma && <section className="content-section figma-section" id="figma"><SectionHeader content={t.section.figma} /><div className="figma-grid">{[1,2,3].map((item) => <article className="figma-card" key={item}><SiFigma /><span>{t.figmaSoon}</span><h3>{t.figmaTitle} 0{item}</h3><p>{t.figmaText}</p></article>)}</div></section>}
+
+        <section className="blog-promo" id="blog" aria-labelledby="blog-promo-title">
+          <Reveal className="blog-promo-card">
+            <span className="blog-promo-icon" aria-hidden="true"><FiBookOpen /></span>
+            <div className="blog-promo-copy">
+              <span className="blog-promo-label">{t.blogPromo.label}</span>
+              <h2 id="blog-promo-title">{t.blogPromo.title}</h2>
+              <p>{t.blogPromo.description}</p>
+            </div>
+            <a className="blog-promo-link" href={blogPath}>{t.blogPromo.action}<FiArrowUpRight aria-hidden="true" /></a>
+          </Reveal>
+        </section>
 
         <section className="content-section contact-section" id="contact">
           <SectionHeader content={t.section.contact} />
