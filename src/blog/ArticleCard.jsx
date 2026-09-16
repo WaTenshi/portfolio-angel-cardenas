@@ -2,6 +2,7 @@ import { FiArrowUpRight, FiArrowRight } from 'react-icons/fi';
 import { articlePath, assetPath } from './paths';
 import Reveal from '../components/Reveal';
 import { blogCopy } from './copy';
+import { BlogLink } from './BlogRouter';
 
 export function ArticleMeta({ article, language }) {
   const t = blogCopy[language];
@@ -13,16 +14,16 @@ export default function ArticleCard({ article, language, featured = false, index
   return (
     <Reveal delay={index * 80} className={featured ? 'featured-story' : 'archive-story'}>
       <article className="story-card">
-        <a className="story-art" href={articlePath(article.slug)} aria-label={`${t.read}: ${article.title}`}>
+        <BlogLink className="story-art" href={articlePath(article.slug)} aria-label={`${t.read}: ${article.title}`}>
           <img src={assetPath(article.coverImage.src)} alt={article.coverImage.alt} width={article.coverImage.width} height={article.coverImage.height} loading={featured ? 'eager' : 'lazy'} fetchPriority={featured ? 'high' : 'auto'} decoding="async" />
           <span className="art-corner" aria-hidden="true"><FiArrowUpRight /></span>
-        </a>
+        </BlogLink>
         <div className="story-copy">
           <div className="story-eyebrow"><span>{featured ? t.featured : String(index + 1).padStart(2, '0')}</span><span lang={article.language}>{article.category}</span></div>
-          <h2 lang={article.language}><a href={articlePath(article.slug)}>{article.title}</a></h2>
+          <h2 lang={article.language}><BlogLink href={articlePath(article.slug)}>{article.title}</BlogLink></h2>
           <p lang={article.language}>{article.description}</p>
           <ArticleMeta article={article} language={language} />
-          <a className="blog-read-link" href={articlePath(article.slug)}>{t.read}<FiArrowRight /></a>
+          <BlogLink className="blog-read-link" href={articlePath(article.slug)}>{t.read}<FiArrowRight /></BlogLink>
         </div>
       </article>
     </Reveal>

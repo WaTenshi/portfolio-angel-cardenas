@@ -94,6 +94,7 @@ fs.mkdirSync(output, { recursive: true });
     await page.locator('.mobile-toc a').nth(2).click();
     assert(page.url().includes('#dar-soporte'));
     await page.emulateMedia({reducedMotion:'reduce'});
+    await page.waitForFunction(() => document.querySelectorAll('.blog-controls button')[2]?.disabled);
     assert(await page.locator('.blog-controls button').nth(2).isDisabled());
     assert.equal(await page.locator('[data-reveal]').evaluateAll(es=>es.filter(e=>getComputedStyle(e).opacity==='0').length),0);
     assert.equal((await page.goto(url+'blog/not-an-article/')).status(),404);

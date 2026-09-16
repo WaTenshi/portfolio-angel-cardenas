@@ -3,28 +3,25 @@ import { FiArrowLeft, FiArrowRight, FiChevronDown } from 'react-icons/fi';
 import articles from 'virtual:blog-articles';
 import BlogLayout from './BlogLayout';
 import MarkdownBody from './MarkdownBody';
-import NotFound from './NotFound';
+import { BlogNotFound } from './NotFound';
 import { ArticleMeta } from './ArticleCard';
 import { articlePath, assetPath, blogPath } from './paths';
 import { articleHeadings } from './markdown';
-import { useSitePreferences } from '../hooks/useSitePreferences';
-import { useMotion } from '../hooks/useMotion';
 import { useReadingProgress } from './useReadingProgress';
 import { blogCopy } from './copy';
+import { BlogLink } from './BlogRouter';
 
 const contentFiles = import.meta.glob('../content/blog/*.md', { query: '?raw', import: 'default' });
 
-export default function ArticlePage({ slug }) {
+export default function ArticlePage({ slug, preferences, motion }) {
   const article = articles.find((entry) => entry.slug === slug);
-  return article ? <ArticleReader key={slug} article={article} /> : <NotFound />;
+  return article ? <ArticleReader key={slug} article={article} preferences={preferences} motion={motion} /> : <BlogNotFound preferences={preferences} motion={motion} />;
 }
 
-function ArticleReader({ article }) {
-  const preferences = useSitePreferences();
+function ArticleReader({ article, preferences, motion }) {
   const [content, setContent] = useState('');
   const [error, setError] = useState(false);
   const contentKey = `${article.slug}:${Boolean(content)}`;
-  const motion = useMotion(contentKey);
   const t = blogCopy[preferences.language];
   const bodyRef = useRef(null);
   const progressRef = useRef(null);
@@ -60,7 +57,7 @@ function ArticleReader({ article }) {
       <div className="reading-progress" ref={progressRef} role="progressbar" aria-label={t.progress} aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}><span /></div>
       <article className="article-page" lang={article.language}>
         <header className="article-header">
-          <a className="article-back" href={blogPath} lang={preferences.language}><FiArrowLeft />{t.index}</a>
+          <BlogLink className="article-back" href={blogPath} lang={preferences.language}><FiArrowLeft />{t.index}</BlogLink>
           <div className="article-kicker"><span>{article.category}</span><span>NOTAS / {String(currentIndex + 1).padStart(2, '0')}</span></div>
           <h1>{article.title}</h1>
           <p className="article-deck">{article.description}</p>
@@ -74,13 +71,13 @@ function ArticleReader({ article }) {
               <details className="mobile-toc"><summary><span lang={preferences.language}>{t.contents}</span><FiChevronDown /></summary>{toc}</details>
               <div className="article-body" ref={bodyRef}><MarkdownBody content={content} /></div>
               <div className="article-tags">{article.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-              <div className="article-ending" lang={preferences.language}><span className="blog-eyebrow">FIN / END</span><h2>{t.end}</h2><p>{t.endText}</p><a className="blog-read-link" href={blogPath}><FiArrowLeft />{t.back}</a></div>
+              <div className="article-ending" lang={preferences.language}><span className="blog-eyebrow">FIN / END</span><h2>{t.end}</h2><p>{t.endText}</p><BlogLink className="blog-read-link" href={blogPath}><FiArrowLeft />{t.back}</BlogLink></div>
             </div>
           </div>
-        ) : <div className="article-loading" role="status" lang={preferences.language}>{error ? <><p>{t.error}</p><button onClick={() => window.location.reload()}>{t.retry}</button><a href={blogPath}>{t.back}</a></> : t.loading}</div>}
+        ) : <div className="article-loading" role="status" lang={preferences.language}>{error ? <><p>{t.error}</p><button onClick={() => window.location.reload()}>{t.retry}</button><BlogLink href={blogPath}>{t.back}</BlogLink></> : t.loading}</div>}
       </article>
-      {(previous || next) && <nav className="article-pagination" aria-label={t.related}>{previous && <a href={articlePath(previous.slug)}><span>{t.previous}</span><strong lang={previous.language}>{previous.title}</strong><FiArrowLeft /></a>}{next && <a href={articlePath(next.slug)}><span>{t.next}</span><strong lang={next.language}>{next.title}</strong><FiArrowRight /></a>}</nav>}
-      {related.length > 0 && <section className="related-articles"><h2>{t.related}</h2>{related.map((entry) => <a key={entry.slug} href={articlePath(entry.slug)} lang={entry.language}>{entry.title}<FiArrowRight /></a>)}</section>}
+      {(previous || next) && <nav className="article-pagination" aria-label={t.related}>{previous && <BlogLink href={articlePath(previous.slug)}><span>{t.previous}</span><strong lang={previous.language}>{previous.title}</strong><FiArrowLeft /></BlogLink>}{next && <BlogLink href={articlePath(next.slug)}><span>{t.next}</span><strong lang={next.language}>{next.title}</strong><FiArrowRight /></BlogLink>}</nav>}
+      {related.length > 0 && <section className="related-articles"><h2>{t.related}</h2>{related.map((entry) => <BlogLink key={entry.slug} href={articlePath(entry.slug)} lang={entry.language}>{entry.title}<FiArrowRight /></BlogLink>)}</section>}
     </BlogLayout>
   );
 }

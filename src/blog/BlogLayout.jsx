@@ -1,6 +1,7 @@
 import { FiArrowLeft, FiArrowUpRight, FiMoon, FiSun, FiPause, FiPlay } from 'react-icons/fi';
 import { blogPath, siteBase } from './paths';
 import { blogCopy } from './copy';
+import { BlogLink } from './BlogRouter';
 import './Blog.css';
 
 export default function BlogLayout({ preferences, motion, children }) {
@@ -12,7 +13,7 @@ export default function BlogLayout({ preferences, motion, children }) {
       <a className="skip-link" href="#blog-main">{t.skip}</a>
       <header className="blog-header">
         <div className="blog-header-inner">
-          <a className="blog-brand" href={blogPath}><span>Ángel Cárdenas</span><b>/ Blog</b></a>
+          <BlogLink className="blog-brand" href={blogPath}><span>Ángel Cárdenas</span><b>/ Blog</b></BlogLink>
           <a className="blog-portfolio-link" href={siteBase} aria-label={t.portfolio}><FiArrowLeft /><span>{t.portfolio}</span></a>
           <div className="blog-controls">
             <button onClick={() => setLanguage(language === 'es' ? 'en' : 'es')} aria-label={language === 'es' ? 'Switch to English' : 'Cambiar a español'}>{language === 'es' ? 'EN' : 'ES'}</button>
@@ -22,7 +23,7 @@ export default function BlogLayout({ preferences, motion, children }) {
         </div>
       </header>
       <main id="blog-main" tabIndex={-1}>{children}</main>
-      <footer className="blog-footer"><a href={blogPath} className="blog-signature">Ángel Cárdenas<span> / Blog</span></a><div><span>© {new Date().getFullYear()} · {t.footer}</span><a href={siteBase}>{t.portfolio}<FiArrowUpRight /></a></div></footer>
+      <footer className="blog-footer"><BlogLink href={blogPath} className="blog-signature">Ángel Cárdenas<span> / Blog</span></BlogLink><div><span>© {new Date().getFullYear()} · {t.footer}</span><a href={siteBase}>{t.portfolio}<FiArrowUpRight /></a></div></footer>
     </div>
   );
 }
