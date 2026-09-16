@@ -44,6 +44,7 @@ import CertificateModal from "./components/CertificateModal";
 import { useMotion } from "./hooks/useMotion";
 import { useSitePreferences } from "./hooks/useSitePreferences";
 import BlogFab from "./components/BlogFab";
+import PortfolioTerminal from "./components/terminal/PortfolioTerminal";
 import { blogPath } from "./blog/paths";
 import images from "./assets/optimized/images";
 
@@ -640,6 +641,18 @@ function App() {
     setMenuOpen(false);
   };
 
+  const terminalContext = {
+    language,
+    theme,
+    projects,
+    experience,
+    stackGroups,
+    aboutText: t.aboutText,
+    stackLabels: t.stackGroups,
+    location: t.location,
+    blogUrl: blogPath,
+  };
+
   const navigate = (event, id) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
@@ -790,6 +803,7 @@ function App() {
       </main>
       <footer><a className="footer-brand" href="#home" onClick={(event) => navigate(event, "home")}>Ángel Cárdenas<span>®</span></a><div className="footer-bottom"><span>© {new Date().getFullYear()} · {t.footer}</span><a href="#home" onClick={(event) => navigate(event, "home")}>{t.backTop}<FiArrowUpRight /></a></div></footer>
       <BlogFab language={language} />
+      <PortfolioTerminal context={terminalContext} setLanguage={setLanguage} setTheme={setTheme} navigateTo={scrollTo} />
       {modalCertificate && <CertificateModal certificate={modalCertificate} labels={t.certificateLabels} onClose={closeCertificate} />}
     </div>
   );

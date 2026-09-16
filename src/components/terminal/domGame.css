@@ -1,0 +1,141 @@
+.dom-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  z-index: 400;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  border: 0;
+  background: #070908ee;
+  color: #edf3e9;
+  font-family: "IBM Plex Mono", monospace;
+  overflow: hidden;
+  animation: dom-overlay-in 220ms ease-out;
+}
+
+.dom-overlay:not([open]) { display: none; }
+.dom-overlay::backdrop { background: #070908; }
+
+.dom-game-shell {
+  width: min(1120px, 100%);
+  max-height: calc(100dvh - 36px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #435047;
+  border-radius: 12px;
+  background: #121613;
+  box-shadow: 0 35px 100px #000b;
+}
+
+.dom-game-shell:fullscreen { width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; }
+
+.dom-header { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 10px 14px 10px 22px; border-bottom: 1px solid #343e36; background: #191e1a; }
+.dom-header > div:first-child { display: flex; align-items: baseline; gap: 18px; }
+.dom-header span { color: #7f8b80; font-size: 8px; letter-spacing: .14em; }
+.dom-header h2 { margin: 0; color: #54e49b; font: italic 42px/.85 "Instrument Serif", serif; letter-spacing: -.05em; }
+.dom-header-actions { display: flex; gap: 8px; }
+.dom-header-actions button { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #39443b; border-radius: 50%; background: transparent; color: #b5c0b5; }
+.dom-header-actions button:hover, .dom-header-actions button:focus-visible { border-color: #54e49b; color: #54e49b; }
+
+.dom-screen-wrap { position: relative; flex: 1; min-height: 0; aspect-ratio: 16 / 10; overflow: hidden; background: #090b0a; }
+.dom-canvas { width: 100%; height: 100%; display: block; object-fit: fill; image-rendering: pixelated; cursor: crosshair; }
+.dom-canvas:focus { outline: 0; }
+.dom-crosshair { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; border: 1px solid #e8eee5aa; transform: translate(-50%, -50%); pointer-events: none; }
+.dom-objective { position: absolute; z-index: 2; left: 14px; top: 14px; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid #d9575766; background: #090d0bcc; color: #f0b0ac; font: 7px "IBM Plex Mono", monospace; letter-spacing: .1em; pointer-events: none; }
+.dom-objective i { width: 7px; height: 7px; border: 1px solid currentColor; transform: rotate(45deg); animation: dom-core-pulse 1.2s steps(2, end) infinite; }
+.dom-objective.is-complete { border-color: #54e49b66; color: #75eab0; }
+.dom-notice { position: absolute; z-index: 3; left: 50%; top: 18%; max-width: calc(100% - 40px); transform: translateX(-50%); padding: 7px 12px; border-inline: 1px solid #54e49b88; background: #07100ddb; color: #dff8e8; font: 8px "IBM Plex Mono", monospace; letter-spacing: .12em; text-align: center; animation: dom-notice-in 180ms ease-out; pointer-events: none; }
+
+.dom-story-panel { position: absolute; inset: 0; z-index: 5; display: grid; grid-template-columns: minmax(260px, .78fr) minmax(0, 1.22fr); background: #080c09f2; backdrop-filter: blur(5px); }
+.dom-story-portrait { position: relative; min-width: 0; overflow: hidden; border-right: 1px solid #3a473d; background: #071009; }
+.dom-story-portrait::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 68%, #080c09 100%), linear-gradient(0deg, #080c09 0%, transparent 30%); pointer-events: none; }
+.dom-story-portrait img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; image-rendering: pixelated; transform-origin: 50% 70%; animation: dom-speaking 520ms steps(2, end) infinite alternate; }
+.dom-story-scanline { position: absolute; inset: 0; z-index: 2; opacity: .18; background: repeating-linear-gradient(0deg, transparent 0 3px, #54e49b33 3px 4px); mix-blend-mode: screen; pointer-events: none; }
+.dom-story-dialogue { min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: clamp(26px, 5vw, 70px); }
+.dom-story-meta { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 13px; border-bottom: 1px solid #354137; color: #54e49b; font-size: 8px; letter-spacing: .14em; }
+.dom-story-dialogue p { min-height: 4.8em; margin: clamp(22px, 4vw, 46px) 0 18px; color: #edf3e9; font: 400 clamp(24px, 3.3vw, 47px)/1.18 "Instrument Serif", serif; animation: dom-dialogue-in 240ms ease-out both; }
+.dom-story-dialogue > small { color: #89958a; font-size: 8px; letter-spacing: .12em; }
+.dom-story-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 26px; }
+.dom-story-actions button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 0 17px; border: 1px solid #435046; font: 9px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.dom-story-primary { background: #54e49b; border-color: #54e49b !important; color: #0c120e; }
+.dom-story-primary:hover, .dom-story-primary:focus-visible { background: transparent; color: #54e49b; }
+.dom-story-secondary { margin-right: auto; background: transparent; color: #9aa59a; }
+.dom-story-secondary:hover, .dom-story-secondary:focus-visible { border-color: #9aa59a; color: #edf3e9; }
+
+.dom-start-panel { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; background: #0a0d0ad9; backdrop-filter: blur(5px); }
+.dom-start-panel > span { color: #54e49b; font-size: 9px; letter-spacing: .16em; }
+.dom-start-panel h3 { margin: 16px 0 8px; font: 400 clamp(38px, 6vw, 72px)/1 "Instrument Serif", serif; }
+.dom-start-panel p { max-width: 520px; margin: 0; color: #aeb8ae; font: 13px/1.7 "DM Sans", sans-serif; }
+.dom-start-panel button { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 13px 19px; border: 1px solid #54e49b; background: #54e49b; color: #101410; font: 10px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.dom-start-panel button:hover, .dom-start-panel button:focus-visible { background: transparent; color: #54e49b; }
+.dom-result-panel { background: #0a0d0aed; }
+
+.dom-hud { flex: 0 0 72px; display: grid; grid-template-columns: 1fr 1fr 1.3fr 1fr 1fr; border-top: 1px solid #374138; background: #171c18; }
+.dom-hud > div { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #303932; }
+.dom-hud > div:last-child { border-right: 0; }
+.dom-hud span, .dom-hud small { color: #7f8b80; font-size: 7px; letter-spacing: .12em; }
+.dom-hud strong { color: #e9f0e7; font-size: clamp(18px, 3vw, 28px); line-height: 1.1; }
+.dom-hud-brand b { color: #54e49b; font: italic 30px/.9 "Instrument Serif", serif; }
+.dom-help { min-height: 30px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px 25px; padding: 6px 16px; color: #7f8b80; background: #0e110f; font-size: 7px; letter-spacing: .08em; text-transform: uppercase; }
+
+.dom-touch-controls { position: absolute; inset: auto 14px 14px; z-index: 3; display: none; align-items: end; justify-content: space-between; pointer-events: none; }
+.dom-touch-controls button { pointer-events: auto; touch-action: none; user-select: none; border: 1px solid #dbe6dc66; background: #0b0e0bb8; color: #ecf2ea; font: 12px "IBM Plex Mono", monospace; }
+.dom-dpad { width: 126px; display: grid; grid-template-columns: repeat(3, 40px); grid-template-areas: ". up ." "left down right"; gap: 3px; }
+.dom-dpad button { height: 40px; }
+.dom-dpad button:nth-child(1) { grid-area: up; }
+.dom-dpad button:nth-child(2) { grid-area: left; }
+.dom-dpad button:nth-child(3) { grid-area: down; }
+.dom-dpad button:nth-child(4) { grid-area: right; }
+.dom-touch-actions { display: flex; align-items: end; gap: 8px; }
+.dom-map { width: 42px; height: 42px; font-size: 7px !important; }
+.dom-map[aria-pressed="true"] { border-color: #63d8ff; color: #63d8ff; }
+.dom-fire { width: 66px; height: 66px; border-color: #54e49baa !important; border-radius: 50%; color: #54e49b !important; }
+
+@keyframes dom-overlay-in { from { opacity: 0; } }
+@keyframes dom-speaking { from { transform: translateY(0) scale(1.004, .998); filter: brightness(.96); } to { transform: translateY(-2px) scale(.998, 1.004); filter: brightness(1.04); } }
+@keyframes dom-dialogue-in { from { opacity: 0; transform: translateY(7px); } }
+@keyframes dom-notice-in { from { opacity: 0; transform: translate(-50%, -5px); } }
+@keyframes dom-core-pulse { 50% { opacity: .35; transform: rotate(45deg) scale(.75); } }
+
+@media (pointer: coarse), (max-width: 780px) {
+  .dom-overlay { padding: 0; }
+  .dom-game-shell { width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; }
+  .dom-header { min-height: 56px; padding: 8px 10px 8px 14px; }
+  .dom-header > div:first-child > span { display: none; }
+  .dom-header h2 { font-size: 34px; }
+  .dom-screen-wrap { aspect-ratio: auto; }
+  .dom-touch-controls { display: flex; }
+  .dom-objective { left: 8px; top: 8px; max-width: calc(100% - 16px); }
+  .dom-notice { top: 13%; font-size: 7px; }
+  .dom-hud { flex-basis: 60px; }
+  .dom-help { display: none; }
+  .dom-story-panel { grid-template-columns: 1fr; grid-template-rows: minmax(170px, 42%) minmax(0, 1fr); }
+  .dom-story-portrait { border-right: 0; border-bottom: 1px solid #3a473d; }
+  .dom-story-portrait::after { background: linear-gradient(0deg, #080c09 0%, transparent 48%); }
+  .dom-story-portrait img { object-position: center 28%; }
+  .dom-story-dialogue { justify-content: flex-start; padding: 18px 20px; }
+  .dom-story-dialogue p { min-height: 3.4em; margin: 16px 0 8px; font-size: clamp(22px, 7.2vw, 34px); }
+  .dom-story-actions { margin-top: auto; padding-top: 12px; }
+}
+
+@media (max-width: 480px) {
+  .dom-hud { grid-template-columns: repeat(4, 1fr); }
+  .dom-hud > div:nth-child(4) { border-right: 0; }
+  .dom-hud > div:last-child { display: none; }
+  .dom-hud-brand { grid-row: 1; grid-column: 3; }
+  .dom-start-panel { padding: 20px; }
+  .dom-start-panel p { font-size: 12px; }
+  .dom-story-meta { font-size: 7px; }
+  .dom-story-actions { gap: 7px; }
+  .dom-story-actions button { min-height: 39px; padding-inline: 11px; font-size: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dom-overlay, .dom-story-portrait img, .dom-story-dialogue p, .dom-objective i, .dom-notice { animation: none; }
+}
