@@ -6,6 +6,8 @@ import { routeFromPath } from './blog/paths';
 const route = routeFromPath(window.location.pathname);
 const Page = route.type === 'portfolio'
   ? lazy(() => import('./App.jsx'))
+  : route.type.startsWith('lab')
+    ? lazy(() => import('./lab/LabApp.jsx'))
   : route.type === 'blog' || route.type === 'article'
     ? lazy(() => import('./blog/BlogApp.jsx'))
       : lazy(() => import('./blog/NotFound.jsx'));

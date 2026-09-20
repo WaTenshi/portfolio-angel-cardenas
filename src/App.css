@@ -28,6 +28,9 @@
 :where(.portfolio-shell) .brand-mark { font: italic 48px/.7 "Instrument Serif", serif; letter-spacing: -.08em; }
 :where(.portfolio-shell) .brand-mark > span { font: 10px "IBM Plex Mono", monospace; color: var(--accent); vertical-align: top; margin-left: 5px; }
 :where(.portfolio-shell) .main-nav { display: flex; gap: 26px; margin: auto; }
+:where(.portfolio-shell) .header-lab-link { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font: 700 9px "IBM Plex Mono", monospace; letter-spacing: .12em; }
+:where(.portfolio-shell) .header-lab-link i { width: 6px; height: 6px; border: 1px solid var(--accent); transform: rotate(45deg); }
+:where(.portfolio-shell) .header-lab-link:hover, :where(.portfolio-shell) .header-lab-link:focus-visible { color: var(--accent); }
 :where(.portfolio-shell) .main-nav a { position: relative; padding: 10px 0; color: var(--muted); font-size: 12px; }
 :where(.portfolio-shell) .main-nav a::after { content: ""; position: absolute; bottom: 3px; left: 0; width: 100%; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 200ms ease; }
 :where(.portfolio-shell) .main-nav a[aria-current], :where(.portfolio-shell) .main-nav a:hover, :where(.portfolio-shell) .main-nav a:focus-visible { color: var(--text); }

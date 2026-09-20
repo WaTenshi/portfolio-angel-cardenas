@@ -27,6 +27,7 @@ import { blogPath } from "./blog/paths";
 import images from "./assets/optimized/images";
 import { experience, projects } from "./data/portfolio/index.js";
 import { areas, skills } from "./data/skillGraph/index.js";
+import { labDebugPath, labPath } from "./lab/labData.js";
 
 const ProjectArchitectureExplorer = lazy(() => import("./components/architecture/ProjectArchitectureExplorer.jsx"));
 const architectureIds = new Set(["journalfit", "consultora", "certificados"]);
@@ -423,6 +424,8 @@ function App() {
     aboutText: t.aboutText,
     location: t.location,
     blogUrl: blogPath,
+    labUrl: labPath,
+    debugUrl: labDebugPath,
   };
 
   const navigate = (event, id) => {
@@ -507,6 +510,7 @@ function App() {
               <a key={t.navIds[index]} href={`#${t.navIds[index]}`} aria-current={activeSection === t.navIds[index] ? "location" : undefined} onClick={(event) => navigate(event, t.navIds[index])}>{item}</a>
             ))}
           </nav>
+          <a className="header-lab-link" href={labPath}>LAB<i aria-hidden="true" /></a>
           <div className="header-actions">
             <button className="utility-button language-button" onClick={() => setLanguage(language === "es" ? "en" : "es")} aria-label={language === "es" ? "Switch to English" : "Cambiar a español"}>{language === "es" ? "EN" : "ES"}</button>
             <button className="utility-button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? t.lightTheme : t.darkTheme} title={theme === "dark" ? t.lightTheme : t.darkTheme}>{theme === "dark" ? <FiSun /> : <FiMoon />}</button>

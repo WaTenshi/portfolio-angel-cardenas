@@ -15,6 +15,9 @@ export const terminalCompletions = [
   "github",
   "linkedin",
   "blog",
+  "lab",
+  "debug",
+  "dum",
   "clear",
   "theme",
   "language",
@@ -66,6 +69,9 @@ const help = {
     "github       Abrir GitHub",
     "linkedin     Abrir LinkedIn",
     "blog         Abrir el blog",
+    "lab          Abrir Tenshi Lab",
+    "debug        Iniciar Debug Challenge",
+    "dum          Jugar DUM",
     "goto <lugar> Ir a una sección del portfolio",
     "clear        Limpiar la terminal",
     "theme [modo] Cambiar tema (dark / light)",
@@ -87,6 +93,9 @@ const help = {
     "github       Open GitHub",
     "linkedin     Open LinkedIn",
     "blog         Open the blog",
+    "lab          Open Tenshi Lab",
+    "debug        Start Debug Challenge",
+    "dum          Play DUM",
     "goto <place> Go to a portfolio section",
     "clear        Clear the terminal",
     "theme [mode] Change theme (dark / light)",
@@ -105,7 +114,7 @@ function projectDetail(project, language) {
 }
 
 export function executeTerminalCommand(rawInput, context) {
-  const { language, theme, projects, experience, skills, areas, aboutText, location, blogUrl } = context;
+  const { language, theme, projects, experience, skills, areas, aboutText, location, blogUrl, labUrl, debugUrl } = context;
   const input = rawInput.trim();
   const [command = "", ...args] = input.split(/\s+/);
   const name = command.toLocaleLowerCase("en");
@@ -202,6 +211,8 @@ export function executeTerminalCommand(rawInput, context) {
   if (name === "github") return { lines: [isEs ? "Abriendo GitHub…" : "Opening GitHub…"], action: { type: "open", url: GITHUB_URL } };
   if (name === "linkedin") return { lines: [isEs ? "Abriendo LinkedIn…" : "Opening LinkedIn…"], action: { type: "open", url: LINKEDIN_URL } };
   if (name === "blog") return { lines: [isEs ? "Abriendo el blog…" : "Opening the blog…"], action: { type: "same-tab", url: blogUrl } };
+  if (name === "lab") return { lines: [isEs ? "Inicializando Tenshi Lab…" : "Initializing Tenshi Lab…"], action: { type: "same-tab", url: labUrl }, close: true };
+  if (name === "debug") return { lines: [isEs ? "Abriendo Test Chamber 01…" : "Opening Test Chamber 01…"], action: { type: "same-tab", url: debugUrl }, close: true };
   if (name === "dum") return { lines: ["Loading DUM: Sector 01…"], action: { type: "game" } };
   if (name === "dom") return { lines: [isEs ? "El protocolo cambió. Prueba: dum" : "The protocol changed. Try: dum"] };
   if (name === "doom") return { lines: [isEs ? "Ese nombre pertenece a otro infierno. Aquí buscamos DUM." : "That name belongs to another hell. We are looking for DUM here."] };

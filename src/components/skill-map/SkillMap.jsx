@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FiChevronDown, FiMinus, FiPause, FiPlay, FiPlus, FiRotateCcw, FiSearch, FiX } from "react-icons/fi";
+import { FiChevronDown, FiMaximize2, FiMinimize2, FiMinus, FiPause, FiPlay, FiPlus, FiRotateCcw, FiSearch, FiX } from "react-icons/fi";
 import {
   allConnections, areas, entityKey, getConnections, getEntity, getRelatedEntities, graphExperience,
   graphProjects, graphStats, searchEntities, skills, tours,
@@ -12,12 +12,12 @@ const copy = {
   es: {
     eyebrow: "TECH GRAPH / 2026", title: "Tecnologías en contexto.", intro: "No se trata de cuántas herramientas conozco, sino de dónde y cómo las he utilizado.",
     search: "Buscar tecnología, proyecto o experiencia", select: "Explora las conexiones", current: "Nodo actual", all: "Todo", professional: "Profesional", client: "Clientes", personal: "Personal", production: "Producción",
-    view: "Vista", area: "Área", context: "Contexto", graph: "Grafo", clusters: "Clusters", projects: "Proyectos", experience: "Experiencia", controls: "Controles", reset: "Restablecer", explode: "Separar", collapse: "Unir", orbit: "Órbita", showAll: "Mostrar todo", showCore: "Priorizar", tour: "Recorrido", stop: "Detener", textual: "Representación textual del grafo", connected: "conecta con", noResults: "Sin resultados",
+    view: "Vista", area: "Área", context: "Contexto", graph: "Grafo", clusters: "Clusters", projects: "Proyectos", experience: "Experiencia", controls: "Controles", reset: "Restablecer", explode: "Separar", collapse: "Unir", orbit: "Órbita", showAll: "Mostrar todo", showCore: "Priorizar", tour: "Recorrido", stop: "Detener", textual: "Representación textual del grafo", connected: "conecta con", noResults: "Sin resultados", fullscreen: "Pantalla completa", exitFullscreen: "Salir de pantalla completa", fullscreenDialog: "Mapa interactivo de tecnologías en pantalla completa",
   },
   en: {
     eyebrow: "TECH GRAPH / 2026", title: "Technology in context.", intro: "It is not about how many tools I know, but where and how I have used them.",
     search: "Search technology, project, or experience", select: "Explore the connections", current: "Current node", all: "All", professional: "Professional", client: "Client work", personal: "Personal", production: "Production",
-    view: "View", area: "Area", context: "Context", graph: "Graph", clusters: "Clusters", projects: "Projects", experience: "Experience", controls: "Controls", reset: "Reset", explode: "Explode", collapse: "Collapse", orbit: "Orbit", showAll: "Show all", showCore: "Prioritize", tour: "Guided tour", stop: "Stop", textual: "Text representation of the graph", connected: "connects to", noResults: "No results",
+    view: "View", area: "Area", context: "Context", graph: "Graph", clusters: "Clusters", projects: "Projects", experience: "Experience", controls: "Controls", reset: "Reset", explode: "Explode", collapse: "Collapse", orbit: "Orbit", showAll: "Show all", showCore: "Prioritize", tour: "Guided tour", stop: "Stop", textual: "Text representation of the graph", connected: "connects to", noResults: "No results", fullscreen: "Full screen", exitFullscreen: "Exit full screen", fullscreenDialog: "Interactive technology map in full screen",
   },
 };
 const views = ["graph", "clusters", "projects", "experience"];
@@ -37,7 +37,7 @@ function dispatchEvent(name, detail = {}) {
 
 export default function SkillMap({ language, motionEnabled, onOpenArchitecture }) {
   const t = copy[language];
-  const rootRef = useRef(null); const searchRef = useRef(null);
+  const rootRef = useRef(null); const searchRef = useRef(null); const expandButtonRef = useRef(null);
   const initialParams = useMemo(() => new URLSearchParams(window.location.search), []);
   const [selected, setSelected] = useState(selectionFromUrl);
   const [originSkill, setOriginSkill] = useState(() => selectionFromUrl()?.type === "skill" ? selectionFromUrl().id : null);
@@ -47,6 +47,7 @@ export default function SkillMap({ language, motionEnabled, onOpenArchitecture }
   const [context, setContext] = useState(() => contexts.includes(initialParams.get("skillContext")) ? initialParams.get("skillContext") : "all");
   const [showAll, setShowAll] = useState(false); const [zoom, setZoom] = useState(100); const [exploded, setExploded] = useState(false); const [orbit, setOrbit] = useState(false);
   const [query, setQuery] = useState(""); const [searchOpen, setSearchOpen] = useState(false); const [tourIndex, setTourIndex] = useState(-1);
+  const [expanded, setExpanded] = useState(false);
   const [mobile, setMobile] = useState(() => window.matchMedia("(max-width: 560px)").matches);
   const results = useMemo(() => searchEntities(query, language), [query, language]);
 
@@ -56,6 +57,52 @@ export default function SkillMap({ language, motionEnabled, onOpenArchitecture }
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (!expanded) return undefined;
+    const root = rootRef.current;
+    const expandButton = expandButtonRef.current;
+    const shell = root?.closest(".portfolio-shell");
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousShellOverflow = shell?.style.overflow;
+    const background = [
+      document.querySelector(".site-header"),
+      ...document.querySelectorAll("main > :not(#stack)"),
+      document.querySelector("#stack > .section-heading"),
+      document.querySelector(".portfolio-shell > footer"),
+      document.querySelector(".blog-fab"),
+      document.querySelector(".terminal-feature"),
+    ].filter(Boolean);
+    const inertStates = background.map((element) => ({ element, inert: element.inert }));
+    document.body.style.overflow = "hidden";
+    if (shell) shell.style.overflow = "visible";
+    inertStates.forEach(({ element }) => { element.inert = true; });
+
+    const focusableSelector = "button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), summary, [tabindex]:not([tabindex='-1'])";
+    const focusExpandButton = window.requestAnimationFrame(() => expandButton?.focus({ preventScroll: true }));
+    const handleExpandedKey = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setExpanded(false);
+        return;
+      }
+      if (event.key !== "Tab" || !root) return;
+      const focusable = [...root.querySelectorAll(focusableSelector)].filter((element) => element.getClientRects().length > 0);
+      if (!focusable.length) return;
+      const first = focusable[0]; const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", handleExpandedKey, true);
+    return () => {
+      window.cancelAnimationFrame(focusExpandButton);
+      document.removeEventListener("keydown", handleExpandedKey, true);
+      document.body.style.overflow = previousBodyOverflow;
+      if (shell) shell.style.overflow = previousShellOverflow || "";
+      inertStates.forEach(({ element, inert }) => { element.inert = inert; });
+      window.requestAnimationFrame(() => expandButton?.focus({ preventScroll: true }));
+    };
+  }, [expanded]);
 
   const updateUrl = (nextSelection = selected, nextView = view, nextArea = area, nextContext = context, mode = "replace") => {
     const url = new URL(window.location.href);
@@ -145,8 +192,8 @@ export default function SkillMap({ language, motionEnabled, onOpenArchitecture }
   })() : null;
 
   return (
-    <div ref={rootRef} className="skill-map" onKeyDown={handleKey} data-motion-enabled={motionEnabled}>
-      <header className="skill-map-header"><div><span>{t.eyebrow}</span><h3>{t.title}</h3><p>{t.intro}</p></div><div className="skill-live-meta"><span>{graphStats.skills.toString().padStart(2, "0")} SKILLS</span><span>{graphStats.projects.toString().padStart(2, "0")} PROJECTS</span><span>{graphStats.roles.toString().padStart(2, "0")} ROLES</span><small>{t.current}<strong>{currentLabel}</strong></small></div></header>
+    <div ref={rootRef} className={`skill-map${expanded ? " is-expanded" : ""}`} onKeyDown={handleKey} data-motion-enabled={motionEnabled} data-expanded={expanded} role={expanded ? "dialog" : undefined} aria-modal={expanded ? "true" : undefined} aria-labelledby={expanded ? "skill-map-title" : undefined} aria-label={expanded ? t.fullscreenDialog : undefined}>
+      <header className="skill-map-header"><div><span>{t.eyebrow}</span><h3 id="skill-map-title">{t.title}</h3><p>{t.intro}</p></div><div className="skill-live-meta"><span>{graphStats.skills.toString().padStart(2, "0")} SKILLS</span><span>{graphStats.projects.toString().padStart(2, "0")} PROJECTS</span><span>{graphStats.roles.toString().padStart(2, "0")} ROLES</span><small>{t.current}<strong>{currentLabel}</strong></small><button ref={expandButtonRef} type="button" className="skill-expand-button" onClick={() => setExpanded((value) => !value)} aria-pressed={expanded}>{expanded ? <FiMinimize2 /> : <FiMaximize2 />}<span>{expanded ? t.exitFullscreen : t.fullscreen}</span></button></div></header>
       <div className="skill-toolbar">
         <div className="skill-search"><FiSearch /><input ref={searchRef} value={query} onChange={(event) => { setQuery(event.target.value); setSearchOpen(true); }} onFocus={() => setSearchOpen(true)} placeholder={t.search} aria-label={t.search} role="combobox" aria-expanded={searchOpen && Boolean(query)} aria-controls="skill-search-results" />{query && <button type="button" onClick={() => setQuery("")} aria-label="Clear"><FiX /></button>}{searchOpen && query && <div id="skill-search-results" className="skill-search-results" role="listbox">{results.length ? results.map((item) => <button type="button" role="option" aria-selected="false" key={`${item.type}-${item.id}`} onClick={() => select(item.type, item.id)}><span>{item.type}</span><strong>{item.label}</strong></button>) : <span>{t.noResults}</span>}</div>}</div>
         <div className="skill-filter"><span>{t.view}</span>{views.map((item) => <button key={item} type="button" aria-pressed={view === item} onClick={() => changeView(item)}>{t[item]}</button>)}</div>

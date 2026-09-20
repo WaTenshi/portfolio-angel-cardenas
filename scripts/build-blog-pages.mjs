@@ -20,5 +20,10 @@ async function page(relative, title, description, canonical) {
 const articles = readArticles();
 await page('blog/index.html', 'Blog — Ángel Cárdenas', 'Notas desde la práctica. Desarrollo, producto y experiencias con tecnología.', 'blog/');
 for (const article of articles) await page(`blog/${article.slug}/index.html`, `${article.title} — Ángel Cárdenas`, article.description, `blog/${article.slug}/`);
+await page('lab/index.html', 'Tenshi Lab — Ángel Cárdenas', 'Laboratorio experimental de software: minijuegos, desafíos de programación y experiencias interactivas.', 'lab/');
+await page('lab/dum/index.html', 'DUM — Tenshi Lab', 'Experimental FPS · Sector 01.', 'lab/dum/');
+await page('lab/debug/index.html', 'Debug Challenge — Tenshi Lab', 'Elige una cámara de debugging y repara un programa bajo evaluación de Chimuelo.', 'lab/debug/');
+await page('lab/debug/python/basic/index.html', 'Python Debug Challenge — Tenshi Lab', 'Encuentra el bug, corrige el código y completa Test Chamber 01.', 'lab/debug/python/basic/');
+await page('lab/debug/javascript/basic/index.html', 'JavaScript Debug Challenge — Tenshi Lab', 'Corrige la lógica y completa Test Chamber 02.', 'lab/debug/javascript/basic/');
 await page('404.html', 'Página no encontrada — Ángel Cárdenas', 'Vuelve al portfolio o explora el blog de Ángel Cárdenas.', null);
-console.log(`Blog: ${articles.length} artículo(s), índice y página 404 generados.`);
+console.log(`Blog: ${articles.length} artículo(s), rutas Lab y página 404 generados.`);
