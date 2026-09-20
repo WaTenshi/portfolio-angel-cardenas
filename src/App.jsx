@@ -1,12 +1,10 @@
-import { createElement, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   FiArrowDown,
   FiArrowUpRight,
   FiAward,
   FiBookOpen,
   FiCode,
-  FiGithub,
-  FiGlobe,
   FiLinkedin,
   FiMenu,
   FiMoon,
@@ -16,28 +14,7 @@ import {
   FiSun,
   FiX,
 } from "react-icons/fi";
-import {
-  SiBootstrap,
-  SiCss3,
-  SiDjango,
-  SiExpo,
-  SiFigma,
-  SiFirebase,
-  SiFlask,
-  SiGit,
-  SiGooglecloud,
-  SiHtml5,
-  SiJavascript,
-  SiMysql,
-  SiNodedotjs,
-  SiPhp,
-  SiPostgresql,
-  SiPython,
-  SiReact,
-  SiSentry,
-  SiSupabase,
-  SiTypescript,
-} from "react-icons/si";
+import { SiFigma } from "react-icons/si";
 import "./App.css";
 import Reveal from "./components/Reveal";
 import CertificateModal from "./components/CertificateModal";
@@ -45,8 +22,15 @@ import { useMotion } from "./hooks/useMotion";
 import { useSitePreferences } from "./hooks/useSitePreferences";
 import BlogFab from "./components/BlogFab";
 import PortfolioTerminal from "./components/terminal/PortfolioTerminal";
+import SkillMapLoader from "./components/skill-map/SkillMapLoader";
 import { blogPath } from "./blog/paths";
 import images from "./assets/optimized/images";
+import { experience, projects } from "./data/portfolio/index.js";
+import { areas, skills } from "./data/skillGraph/index.js";
+
+const ProjectArchitectureExplorer = lazy(() => import("./components/architecture/ProjectArchitectureExplorer.jsx"));
+const architectureIds = new Set(["journalfit", "consultora", "certificados"]);
+const architectureViews = new Set(["architecture", "data-flow", "decisions"]);
 
 const profile = images.profile;
 import terminalCertificate from "./assets/1752023569576.jpg";
@@ -55,13 +39,6 @@ import coderCertificate from "./assets/coderhouse-certificate.jpg";
 import dataBootcampCertificate from "./assets/Certificado - Bootcamp de Ciencia de Datos.pdf";
 import dataFoundationsCertificate from "./assets/Certificado - Curso de Bases y conceptos de la Ciencia de Datos.pdf";
 import dataScientistCertificate from "./assets/Certificado - Qué hace un científico de datos - Bootcamp de ciencia de datos.pdf";
-const journalFitPreview = images.journalfit;
-const weddingPreview = images.boda;
-const certificatesPreview = images.certificados;
-const psychologyPreview = images.consultora;
-const salonPreview = images.peluqueria;
-const videoPreview = images.video;
-
 const copy = {
   es: {
     nav: ["Proyectos", "Experiencia", "Sobre mí", "Tecnologías", "Certificados", "Contacto"],
@@ -92,7 +69,7 @@ const copy = {
     section: {
       about: ["03 / SOBRE MÍ", "Código con criterio de producto.", "No me interesa construir pantallas aisladas. Diseño sistemas completos que sean claros para las personas y sostenibles para los equipos."],
       experience: ["02 / EXPERIENCIA", "Trayectoria profesional.", "Productos SaaS, plataformas educativas y operación tecnológica en entornos reales."],
-      stack: ["04 / STACK", "Tecnología con propósito.", "Herramientas utilizadas en proyectos reales, organizadas por el problema que resuelven."],
+      stack: ["04 / SKILL MAP", "Tecnología en contexto.", "Explora cómo cada tecnología conecta proyectos, experiencia profesional y decisiones de arquitectura."],
       projects: ["01 / PROYECTOS", "Trabajo seleccionado.", "Trabajo para clientes y proyectos propios: dos formas de llevar ideas a la web."],
       certificates: ["05 / CERTIFICADOS", "Aprendizaje que se convierte en práctica.", "Formación aplicada en desarrollo móvil, inteligencia artificial y ciencia de datos."],
       figma: ["06 / FIGMA", "Diseño en proceso.", "Espacio preparado para sumar casos de UX/UI, sistemas visuales y prototipos."],
@@ -127,7 +104,7 @@ const copy = {
     projectPreview: "Vista previa de",
     items: "herramientas",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
-    projectActions: { live: "Visitar sitio" },
+    projectActions: { live: "Visitar sitio", architecture: "Explorar arquitectura" },
     projectStatus: { active: "En desarrollo", production: "En producción" },
     projectGroups: {
       clients: { title: "Clientes · En producción", description: "Sitios creados para clientes, publicados y en uso." },
@@ -193,7 +170,7 @@ const copy = {
     section: {
       about: ["03 / ABOUT", "Code guided by product thinking.", "I do not build isolated screens. I design complete systems that are clear for people and sustainable for teams."],
       experience: ["02 / EXPERIENCE", "Professional journey.", "SaaS products, education platforms, and technology operations in real environments."],
-      stack: ["04 / STACK", "Technology with purpose.", "Tools used in real projects, organized by the problems they solve."],
+      stack: ["04 / SKILL MAP", "Technology in context.", "Explore how each technology connects projects, professional experience, and architecture decisions."],
       projects: ["01 / PROJECTS", "Selected work.", "Client work and personal projects: two ways to bring ideas to the web."],
       certificates: ["05 / CERTIFICATES", "Learning turned into practice.", "Applied training in mobile development, artificial intelligence, and data science."],
       figma: ["06 / FIGMA", "Design in progress.", "A prepared space for UX/UI case studies, visual systems, and prototypes."],
@@ -228,7 +205,7 @@ const copy = {
     projectPreview: "Preview of",
     items: "tools",
     stackGroups: ["Front-end", "Back-end & data", "Cloud & tools"],
-    projectActions: { live: "Visit website" },
+    projectActions: { live: "Visit website", architecture: "Explore architecture" },
     projectStatus: { active: "In development", production: "In production" },
     projectGroups: {
       clients: { title: "Clients · In production", description: "Websites built for clients, published and in use." },
@@ -266,236 +243,6 @@ const copy = {
     footer: "Designed and developed by Ángel Cárdenas.",
   },
 };
-
-const experience = [
-  {
-    company: "Instituto Grupo Crexer",
-    current: true,
-    dates: { es: "May 2026 — Actualidad", en: "May 2026 — Present" },
-    role: "Full Stack Developer / Webmaster",
-    place: { es: "Concepción · Híbrido · Media jornada", en: "Concepción · Hybrid · Part-time" },
-    points: {
-      es: [
-        "Gestión del desarrollo Full Stack, soporte TI y plataformas institucionales en producción.",
-        "Desarrollo y optimización de sistemas PHP, MySQL y Apache, junto a un CMS con API REST propia.",
-        "Administración de cPanel, WHM, hosting, Moodle y bases de datos productivas.",
-      ],
-      en: [
-        "Full Stack development, IT support, and production platform management.",
-        "Development and optimization of PHP, MySQL, and Apache systems, plus a CMS with its own REST API.",
-        "Administration of cPanel, WHM, hosting, Moodle, and production databases.",
-      ],
-    },
-    tags: ["PHP", "MySQL", "REST API", "Apache", "Moodle"],
-  },
-  {
-    company: "FACEA UdeC",
-    current: true,
-    dates: { es: "Jul 2026 — Actualidad", en: "Jul 2026 — Present" },
-    role: "IT Department Assistant and Educational Software Developer",
-    place: { es: "Concepción, Biobío, Chile · Remoto · Jornada parcial", en: "Concepción, Biobío, Chile · Remote · Part-time" },
-    points: {
-      es: [
-        "Mantenimiento y desarrollo de software contable educativo con PHP y MySQL: mejoras funcionales, corrección de errores, gestión de bases de datos y asistencia a usuarios.",
-        "Administración operativa de Moodle para docentes de FACEA UdeC: publicación de materiales, configuración de cursos, matriculación de usuarios, monitoreo y resolución de incidencias.",
-        "Tutoría y apoyo técnico en cursos y diplomados presenciales, orientando a docentes y participantes en el uso de plataformas digitales, herramientas tecnológicas y recursos académicos.",
-      ],
-      en: [
-        "Maintenance and development of educational accounting software with PHP and MySQL, including functional improvements, bug fixes, database management, and user support.",
-        "Operational administration of Moodle for FACEA UdeC faculty: publishing materials, configuring courses, enrolling users, monitoring the platform, and resolving incidents.",
-        "Tutoring and technical support for in-person courses and diploma programs, guiding faculty and participants in the use of digital platforms, technology tools, and academic resources.",
-      ],
-    },
-    tags: ["PHP", "MySQL", "Moodle"],
-  },
-  {
-    company: "AYMatch",
-    dates: { es: "Mar 2026 — Abr 2026", en: "Mar 2026 — Apr 2026" },
-    role: "Full Stack / Mobile Developer",
-    place: "Santiago · Remoto",
-    points: {
-      es: [
-        "Desarrollo end-to-end de un MVP SaaS y una app móvil para reservas en clubes deportivos.",
-        "Integración de React, React Native, Expo, TypeScript y Supabase Auth/PostgreSQL.",
-        "Refactor de arquitectura, monitoreo con Sentry y capacitación para publicación en Google Play.",
-      ],
-      en: [
-        "End-to-end development of a SaaS MVP and mobile booking app for sports clubs.",
-        "Integration of React, React Native, Expo, TypeScript, and Supabase Auth/PostgreSQL.",
-        "Architecture refactor, Sentry monitoring, and Google Play publishing training.",
-      ],
-    },
-    tags: ["React", "React Native", "TypeScript", "Supabase", "Sentry"],
-  },
-  {
-    company: "Econofertas",
-    dates: { es: "Feb 2026", en: "Feb 2026" },
-    role: { es: "Analista de datos", en: "Data Analyst" },
-    place: { es: "Concepción · Híbrido · Contrato temporal", en: "Concepción · Hybrid · Temporary contract" },
-    points: {
-      es: [
-        "Gestión y análisis de datos mediante el software ERP Odoo.",
-        "Integración masiva de datos desde Excel utilizando procesos automatizados con Python.",
-        "Extracción, transformación y limpieza de datos con Python y Pandas.",
-      ],
-      en: [
-        "Data management and analysis using the Odoo ERP platform.",
-        "Bulk Excel data integration through automated processes built with Python.",
-        "Data extraction, transformation, and cleaning with Python and Pandas.",
-      ],
-    },
-    tags: ["Odoo", "Python", "Pandas", "Excel", "Data Cleaning"],
-  },
-  {
-    company: "Aula Educa Limitada",
-    dates: { es: "Nov 2024 — Ene 2026", en: "Nov 2024 — Jan 2026" },
-    role: "Full Stack / UX/UI Developer",
-    place: "Santiago · Remoto",
-    points: {
-      es: [
-        "Aplicación móvil OMR multiplataforma con React Native y Expo para lectura de evaluaciones.",
-        "APIs y servicios con Django, Flask y PHP, conectados a MySQL y Google Cloud Platform.",
-        "Diseño UX/UI en Figma, automatizaciones Python y optimización de consultas y flujos internos.",
-      ],
-      en: [
-        "Cross-platform OMR mobile app built with React Native and Expo for assessment scanning.",
-        "APIs and services with Django, Flask, and PHP, connected to MySQL and Google Cloud Platform.",
-        "UX/UI design in Figma, Python automation, and optimization of queries and internal workflows.",
-      ],
-    },
-    tags: ["React Native", "Django", "Flask", "Python", "GCP", "Figma"],
-  },
-];
-
-const stackGroups = [
-  {
-    items: [
-      ["HTML5", SiHtml5],
-      ["CSS3", SiCss3],
-      ["JavaScript", SiJavascript],
-      ["TypeScript", SiTypescript],
-      ["React", SiReact],
-      ["React Native", SiReact],
-      ["Expo", SiExpo],
-      ["Bootstrap", SiBootstrap],
-    ],
-  },
-  {
-    items: [
-      ["Node.js", SiNodedotjs],
-      ["Python", SiPython],
-      ["PHP", SiPhp],
-      ["Django", SiDjango],
-      ["Flask", SiFlask],
-      ["MySQL", SiMysql],
-      ["PostgreSQL", SiPostgresql],
-      ["Supabase", SiSupabase],
-      ["Firebase", SiFirebase],
-    ],
-  },
-  {
-    items: [
-      ["Google Cloud", SiGooglecloud],
-      ["Sentry", SiSentry],
-      ["Git", SiGit],
-      ["GitHub", FiGithub],
-      ["Figma", SiFigma],
-      ["REST APIs", FiGlobe],
-    ],
-  },
-];
-
-const projects = [
-  {
-    number: "01",
-    title: "JournalFit",
-    date: "Jun 2026",
-    status: "active",
-    image: journalFitPreview,
-    description: {
-      es: "Producto móvil de entrenamiento que centraliza planificación, registro de sesiones y análisis del progreso. Incorpora seguimiento de RPE, cálculo de 1RM y métricas personales para entrenar con contexto y tomar decisiones basadas en evidencia.",
-      en: "Mobile training product that centralizes planning, session logging, and progress analysis. It includes RPE tracking, 1RM calculation, and personal metrics for contextual, evidence-based training.",
-    },
-    tags: ["React", "TypeScript", "Mobile Product", "UX/UI", "Vite"],
-    live: "https://watenshi.github.io/Landing-Journal-Fit/",
-  },
-  {
-    number: "02",
-    title: "Consultora Psicológica",
-    date: "Jun 2026",
-    status: "active",
-    image: psychologyPreview,
-    description: {
-      es: "Sitio profesional para consulta psicológica con agenda, contacto y gestión de contenido orientada a conversión.",
-      en: "Professional psychology practice website with scheduling, contact, and conversion-focused content.",
-    },
-    tags: ["React", "Firebase", "EmailJS", "Vite"],
-    live: "https://watenshi.github.io/consultora-psicologica/",
-  },
-  {
-    number: "03",
-    title: "Susana Riquelme Peluquería",
-    category: "clients",
-    date: "Jun 2026",
-    status: "production",
-    image: salonPreview,
-    description: {
-      es: "Landing editorial para peluquería, enfocada en identidad visual, servicios, marcas y experiencia responsive.",
-      en: "Editorial salon landing page focused on visual identity, services, brands, and responsive experience.",
-    },
-    tags: ["React", "TypeScript", "Vite", "Responsive"],
-    live: "https://susanariquelmepeluqueria.cl",
-  },
-  {
-    title: "Calzados Paula",
-    category: "clients",
-    status: "production",
-    image: images.calzadospaula,
-    description: {
-      es: "Sitio web para Calzados Paula, con una presentación de la marca y su colección de calzado.",
-      en: "Website for Calzados Paula, presenting the brand and its footwear collection.",
-    },
-    tags: ["Web", "Responsive"],
-    live: "https://calzadospaula.cl",
-  },
-  {
-    number: "04",
-    title: "Sistema de Certificados",
-    date: "May 2026",
-    image: certificatesPreview,
-    description: {
-      es: "Herramienta para cargar datos desde Excel, previsualizar certificados y generarlos de forma masiva en PDF.",
-      en: "Tool for importing Excel data, previewing certificates, and generating PDFs in bulk.",
-    },
-    tags: ["JavaScript", "SheetJS", "jsPDF", "JSZip"],
-    live: "https://watenshi.github.io/sistema-certificados/",
-  },
-  {
-    number: "05",
-    title: "Invitación de boda",
-    date: "Jan 2026",
-    image: weddingPreview,
-    description: {
-      es: "Invitación digital inmersiva con animaciones, narrativa visual, información del evento y experiencia móvil.",
-      en: "Immersive digital wedding invitation with animation, visual storytelling, event details, and mobile experience.",
-    },
-    tags: ["React", "Tailwind CSS", "Animation", "Vite"],
-    live: "https://watenshi.github.io/invitacion-boda-mariajose-cristopher/",
-  },
-  {
-    number: "06",
-    title: "Video Player Tenshi",
-    date: "Oct 2022",
-    hidden: true,
-    image: videoPreview,
-    description: {
-      es: "Reproductor de video personalizado creado con JavaScript vanilla, controles propios y una identidad visual experimental.",
-      en: "Custom video player built with vanilla JavaScript, bespoke controls, and an experimental visual identity.",
-    },
-    tags: ["HTML", "CSS", "JavaScript"],
-    live: "https://watenshi.github.io/video-player-uwu/",
-  },
-].filter((project) => !project.hidden);
 
 const certificates = [
   {
@@ -599,12 +346,24 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [modalCertificate, setModalCertificate] = useState(null);
+  const [architectureProject, setArchitectureProject] = useState(() => {
+    const id = new URLSearchParams(window.location.search).get("architecture");
+    return architectureIds.has(id) ? id : null;
+  });
+  const [architectureView, setArchitectureView] = useState(() => {
+    const view = new URLSearchParams(window.location.search).get("view");
+    return architectureViews.has(view) ? view : "architecture";
+  });
+  const [architectureNode, setArchitectureNode] = useState(() => new URLSearchParams(window.location.search).get("node"));
+  const [architectureOrigin, setArchitectureOrigin] = useState(null);
   const certificateTrigger = useRef(null);
+  const architectureTrigger = useRef(null);
   const { enabled, reduced, toggleMotion, scrollBehavior } = useMotion();
   const t = copy[language];
 
   useEffect(() => {
-    const target = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get("view");
+    const params = new URLSearchParams(window.location.search);
+    const target = window.location.hash.slice(1) || (!params.has("architecture") ? params.get("view") : null);
     if (!target) return;
     // Wait for local fonts so deep links land at their final layout position.
     let cancelled = false;
@@ -612,6 +371,19 @@ function App() {
       if (!cancelled) document.getElementById(target)?.scrollIntoView({ behavior: "instant" });
     });
     return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    const syncArchitectureRoute = () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("architecture");
+      const nextView = params.get("view");
+      setArchitectureProject(architectureIds.has(id) ? id : null);
+      setArchitectureView(architectureViews.has(nextView) ? nextView : "architecture");
+      setArchitectureNode(params.get("node"));
+    };
+    window.addEventListener("popstate", syncArchitectureRoute);
+    return () => window.removeEventListener("popstate", syncArchitectureRoute);
   }, []);
 
   useEffect(() => {
@@ -646,9 +418,9 @@ function App() {
     theme,
     projects,
     experience,
-    stackGroups,
+    skills,
+    areas,
     aboutText: t.aboutText,
-    stackLabels: t.stackGroups,
     location: t.location,
     blogUrl: blogPath,
   };
@@ -660,6 +432,15 @@ function App() {
     scrollTo(id);
   };
 
+  const openSkillMap = (skillId = null) => {
+    const url = new URL(window.location.href);
+    ["skill", "skillProject", "role"].forEach((key) => url.searchParams.delete(key));
+    if (skillId) url.searchParams.set("skill", skillId);
+    window.history.pushState(window.history.state, "", `${url.pathname}${url.search}#stack`);
+    scrollTo("stack");
+    window.dispatchEvent(new CustomEvent("portfolio:open-skill", { detail: { id: skillId } }));
+  };
+
   const openCertificate = (certificate, event) => {
     certificateTrigger.current = event.currentTarget;
     setModalCertificate(certificate);
@@ -668,6 +449,42 @@ function App() {
   const closeCertificate = () => {
     setModalCertificate(null);
     requestAnimationFrame(() => certificateTrigger.current?.focus({ preventScroll: true }));
+  };
+
+  const openArchitecture = (project, event, nodeId = null) => {
+    architectureTrigger.current = event.currentTarget;
+    const rect = event.currentTarget.closest?.(".project-card")?.getBoundingClientRect() || event.currentTarget.getBoundingClientRect();
+    setArchitectureOrigin({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+    setArchitectureProject(project.architectureId);
+    setArchitectureView("architecture");
+    setArchitectureNode(nodeId);
+    const url = new URL(window.location.href);
+    url.searchParams.set("architecture", project.architectureId);
+    url.searchParams.set("view", "architecture");
+    if (nodeId) url.searchParams.set("node", nodeId); else url.searchParams.delete("node");
+    window.history.pushState({ architectureExplorer: true }, "", `${url.pathname}${url.search}${url.hash}`);
+  };
+
+  const closeArchitecture = () => {
+    setArchitectureProject(null);
+    setArchitectureNode(null);
+    if (window.history.state?.architectureExplorer) {
+      window.history.back();
+    } else {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("architecture");
+      url.searchParams.delete("node");
+      if (architectureViews.has(url.searchParams.get("view"))) url.searchParams.delete("view");
+      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    }
+    requestAnimationFrame(() => architectureTrigger.current?.focus({ preventScroll: true }));
+  };
+
+  const changeArchitectureView = (view) => {
+    setArchitectureView(view);
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", view);
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
   };
 
   const handleContact = (event) => {
@@ -739,7 +556,7 @@ function App() {
                         <div className="project-visual-top"><span>{String(index + 1).padStart(2, "0")} / {project.tags[0]}</span><FiArrowUpRight /></div>
                         <div className="project-browser"><div className="browser-bar"><i /><i /><i /><span>{project.title}</span></div><img src={project.image.src} srcSet={project.image.srcSet} sizes="(max-width: 780px) calc(100vw - 80px), (max-width: 1336px) calc(50vw - 112px), 556px" width={project.image.width} height={project.image.height} loading="lazy" decoding="async" alt={`${t.projectPreview} ${project.title}`} /></div>
                       </a>
-                      <div className="project-body"><div className="project-index"><span>{group === "clients" ? new URL(project.live).hostname : project.date}</span>{project.status && <span className="project-status">{t.projectStatus[project.status]}</span>}</div><h4>{project.title}</h4><p>{project.description[language]}</p><div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><a className="project-link" href={project.live} target="_blank" rel="noreferrer">{t.projectActions.live}<FiArrowUpRight /></a></div>
+                      <div className="project-body"><div className="project-index"><span>{group === "clients" ? new URL(project.live).hostname : project.date}</span>{project.status && <span className="project-status">{t.projectStatus[project.status]}</span>}</div><h4>{project.title}</h4><p>{project.description[language]}</p><div className="tag-list">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><div className="project-actions"><a className="project-link" href={project.live} target="_blank" rel="noreferrer">{t.projectActions.live}<FiArrowUpRight /></a>{project.architectureId && <button className="project-link architecture-link" type="button" onClick={(event) => openArchitecture(project, event)}><span className="architecture-link-mark" aria-hidden="true"><i /><i /><i /></span>{t.projectActions.architecture}<FiArrowUpRight /></button>}</div></div>
                     </article>
                   </Reveal>
                 ))}
@@ -767,9 +584,9 @@ function App() {
           <div className="about-grid"><Reveal className="about-copy">{t.aboutText.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</Reveal><Reveal delay={80}><dl className="about-list">{t.aboutDetails.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></Reveal></div>
         </section>
 
-        <section className="content-section" id="stack">
+        <section className="content-section skill-map-section" id="stack">
           <SectionHeader content={t.section.stack} />
-          <div className="stack-groups">{stackGroups.map((group, index) => <Reveal key={t.stackGroups[index]} delay={index * 80} className="stack-group"><div className="stack-title"><span>0{index + 1}</span><h3>{t.stackGroups[index]}</h3><small>{group.items.length} {t.items}</small></div><div className="stack-grid">{group.items.map(([name, icon]) => <div className="tech-card" key={name}>{createElement(icon)}<span>{name}</span></div>)}</div></Reveal>)}</div>
+          <SkillMapLoader language={language} motionEnabled={enabled} onOpenArchitecture={(project, node, trigger) => openArchitecture(project, { currentTarget: trigger }, node)} />
         </section>
 
         <section className="content-section certificates-section" id="certificates">
@@ -803,8 +620,9 @@ function App() {
       </main>
       <footer><a className="footer-brand" href="#home" onClick={(event) => navigate(event, "home")}>Ángel Cárdenas<span>®</span></a><div className="footer-bottom"><span>© {new Date().getFullYear()} · {t.footer}</span><a href="#home" onClick={(event) => navigate(event, "home")}>{t.backTop}<FiArrowUpRight /></a></div></footer>
       <BlogFab language={language} />
-      <PortfolioTerminal context={terminalContext} setLanguage={setLanguage} setTheme={setTheme} navigateTo={scrollTo} />
+      <PortfolioTerminal context={terminalContext} setLanguage={setLanguage} setTheme={setTheme} navigateTo={scrollTo} openSkillMap={openSkillMap} />
       {modalCertificate && <CertificateModal certificate={modalCertificate} labels={t.certificateLabels} onClose={closeCertificate} />}
+      {architectureProject && <Suspense fallback={<div className="architecture-load-fallback" role="status">SYSTEM / LOADING</div>}><ProjectArchitectureExplorer key={`${architectureProject}-${architectureNode || "root"}`} projectId={architectureProject} language={language} motionEnabled={enabled} initialView={architectureView} initialNode={architectureNode} originRect={architectureOrigin} onClose={closeArchitecture} onViewChange={changeArchitectureView} /></Suspense>}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import TerminalWindow from "./TerminalWindow";
 import DomGame from "./DomGame";
 import "./terminal.css";
 
-export default function PortfolioTerminal({ context, setLanguage, setTheme, navigateTo }) {
+export default function PortfolioTerminal({ context, setLanguage, setTheme, navigateTo, openSkillMap }) {
   const [open, setOpen] = useState(false);
   const [gameOpen, setGameOpen] = useState(false);
   const buttonRef = useRef(null);
@@ -37,11 +37,13 @@ export default function PortfolioTerminal({ context, setLanguage, setTheme, navi
     if (action.type === "open") window.open(action.url, "_blank", "noopener,noreferrer");
     if (action.type === "same-tab") window.location.assign(action.url);
     if (action.type === "goto") window.setTimeout(() => navigateTo(action.target), action.delay || 0);
+    if (action.type === "skillmap") window.setTimeout(() => openSkillMap(), action.delay || 0);
+    if (action.type === "skill") window.setTimeout(() => openSkillMap(action.id), action.delay || 0);
     if (action.type === "game") {
       setOpen(false);
       setGameOpen(true);
     }
-  }, [navigateTo, setLanguage, setTheme]);
+  }, [navigateTo, openSkillMap, setLanguage, setTheme]);
 
   const closeGame = useCallback(() => {
     if (document.pointerLockElement) document.exitPointerLock?.();

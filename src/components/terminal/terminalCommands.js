@@ -9,6 +9,8 @@ export const terminalCompletions = [
   "project",
   "experience",
   "skills",
+  "skill",
+  "open skillmap",
   "contact",
   "github",
   "linkedin",
@@ -42,6 +44,12 @@ function findProject(query, projects) {
   return projects.find((project) => normalize(project.title).includes(normalizedQuery));
 }
 
+function findSkill(query, skills) {
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery) return null;
+  return skills.find((skill) => [skill.id, skill.name, ...(skill.aliases || [])].some((value) => normalize(value).includes(normalizedQuery)));
+}
+
 const help = {
   es: [
     "COMANDOS DISPONIBLES",
@@ -52,6 +60,8 @@ const help = {
     "open <id>    Abrir un proyecto",
     "experience   Experiencia profesional",
     "skills       Tecnologías y herramientas",
+    "skill <nombre> Seleccionar tecnología en el mapa",
+    "open skillmap Abrir el mapa interactivo",
     "contact      Información de contacto",
     "github       Abrir GitHub",
     "linkedin     Abrir LinkedIn",
@@ -71,6 +81,8 @@ const help = {
     "open <id>    Open a project",
     "experience   Professional experience",
     "skills       Technologies and tools",
+    "skill <name> Select a technology in the map",
+    "open skillmap Open the interactive map",
     "contact      Contact information",
     "github       Open GitHub",
     "linkedin     Open LinkedIn",
@@ -93,7 +105,7 @@ function projectDetail(project, language) {
 }
 
 export function executeTerminalCommand(rawInput, context) {
-  const { language, theme, projects, experience, stackGroups, aboutText, stackLabels, location, blogUrl } = context;
+  const { language, theme, projects, experience, skills, areas, aboutText, location, blogUrl } = context;
   const input = rawInput.trim();
   const [command = "", ...args] = input.split(/\s+/);
   const name = command.toLocaleLowerCase("en");
@@ -129,6 +141,9 @@ export function executeTerminalCommand(rawInput, context) {
   }
 
   if (name === "open") {
+    if (normalize(argument) === "skillmap" || normalize(argument) === "skill map") {
+      return { lines: [isEs ? "Abriendo mapa de tecnologías…" : "Opening skill map…"], action: { type: "skillmap" }, close: true };
+    }
     const project = findProject(argument, projects);
     if (!project) {
       return { lines: [isEs ? "Proyecto no encontrado. Usa “projects” para ver la lista." : "Project not found. Use “projects” to view the list."] };
@@ -154,11 +169,21 @@ export function executeTerminalCommand(rawInput, context) {
 
   if (name === "skills") {
     return {
-      lines: stackGroups.flatMap((group, index) => [
+      lines: areas.flatMap((area, index) => [
         ...(index ? [""] : []),
-        stackLabels[index].toLocaleUpperCase(language),
-        group.items.map(([item]) => item).join(" · "),
+        area.label[language].toLocaleUpperCase(language),
+        skills.filter((skill) => skill.area === area.id).map((skill) => skill.name).join(" · "),
       ]),
+    };
+  }
+
+  if (name === "skill") {
+    const skill = findSkill(argument, skills);
+    if (!skill) return { lines: [isEs ? "Tecnología no encontrada. Usa “skills” para ver la lista." : "Technology not found. Use “skills” to see the list."] };
+    return {
+      lines: [`${isEs ? "Seleccionando" : "Selecting"} ${skill.name}…`, localized(skill.description, language)],
+      action: { type: "skill", id: skill.id },
+      close: true,
     };
   }
 

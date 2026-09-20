@@ -1,0 +1,156 @@
+.architecture-overlay { position: fixed; inset: 0; z-index: 450; display: grid; place-items: center; padding: 20px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(4px); overflow: hidden; }
+.architecture-explorer { position: relative; width: min(1480px, 100%); height: min(940px, calc(100dvh - 40px)); overflow: auto; overscroll-behavior: contain; background: var(--bg); border: 1px solid var(--line-strong); box-shadow: 0 30px 100px #0008; transform-origin: var(--origin-x, center) var(--origin-y, center); animation: architecture-open 720ms cubic-bezier(.16, 1, .3, 1); scrollbar-color: var(--line-strong) transparent; }
+.architecture-explorer:fullscreen { width: 100%; height: 100%; border: 0; }
+.architecture-close { position: sticky; z-index: 30; top: 18px; float: right; display: grid; place-items: center; width: 42px; height: 42px; margin: 18px 18px -60px 0; border: 1px solid var(--line-strong); background: var(--surface); }
+.architecture-close:hover { color: var(--accent); transform: rotate(4deg); }
+.architecture-loading { min-height: 70vh; display: grid; place-items: center; align-content: center; gap: 18px; color: var(--muted); font: 11px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .12em; }
+.architecture-loading i { width: 34px; height: 34px; border: 1px solid var(--line); border-top-color: var(--accent); animation: architecture-spin 800ms linear infinite; }
+.architecture-hero { min-height: 184px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; padding: 44px 72px 30px; border-bottom: 1px solid var(--line); background: linear-gradient(120deg, var(--surface), transparent 62%); }
+.architecture-hero > div:first-child > span, .architecture-source > span { color: var(--accent); font: 9px "IBM Plex Mono", monospace; letter-spacing: .14em; }
+.architecture-hero h1 { margin: 5px 0 4px; font: 400 clamp(45px, 5vw, 78px)/.94 "Instrument Serif", serif; letter-spacing: -.035em; }
+.architecture-hero p { margin: 0; color: var(--muted); font-size: 13px; }
+.architecture-source { display: grid; justify-items: end; gap: 5px; padding-right: 50px; text-align: right; }
+.architecture-source strong, .architecture-source code { color: var(--muted); font: 10px "IBM Plex Mono", monospace; }
+.architecture-source code { color: var(--subtle); }
+.architecture-stack { display: flex; gap: 8px; flex-wrap: wrap; padding: 14px 72px; border-bottom: 1px solid var(--line); }
+.architecture-stack span { padding: 4px 8px; border: 1px solid var(--line); color: var(--muted); font: 8px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-tabs { display: flex; padding: 0 72px; border-bottom: 1px solid var(--line); }
+.architecture-tabs button { position: relative; padding: 18px 30px; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--subtle); font: 10px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+.architecture-tabs button:first-child { border-left: 1px solid var(--line); }
+.architecture-tabs button[aria-selected="true"] { color: var(--text); background: var(--surface); }
+.architecture-tabs button[aria-selected="true"]::after { content: ""; position: absolute; left: 25%; right: 25%; bottom: -1px; height: 2px; background: var(--accent); }
+.architecture-controls { display: grid; grid-template-columns: minmax(0, auto) minmax(0, auto) 1fr; align-items: end; gap: 22px; padding: 16px 72px; border-bottom: 1px solid var(--line); }
+.architecture-controls fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.architecture-controls legend { margin-bottom: 6px; color: var(--subtle); font: 8px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-controls fieldset > div, .architecture-view-buttons { display: flex; flex-wrap: wrap; gap: 5px; }
+.architecture-controls button, .architecture-tour-start, .architecture-tour button { min-height: 30px; padding: 6px 9px; border: 1px solid var(--line); background: transparent; color: var(--muted); font: 8px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-controls button[aria-pressed="true"], .architecture-controls button:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.architecture-view-buttons { justify-content: flex-end; align-items: center; }
+.architecture-view-buttons button { display: inline-flex; align-items: center; gap: 5px; }
+.architecture-view-buttons output { min-width: 40px; color: var(--muted); text-align: center; font: 9px "IBM Plex Mono", monospace; }
+.architecture-main { display: grid; grid-template-columns: minmax(0, 1fr) 330px; min-height: 560px; }
+.architecture-scene-shell { position: relative; min-width: 0; min-height: 560px; overflow: hidden; perspective: 1100px; background: radial-gradient(circle at 50% 45%, var(--accent-soft), transparent 34%), var(--surface); }
+.architecture-scene-shell::after { content: "SYSTEM MAP / LIVE MODEL"; position: absolute; left: 18px; bottom: 14px; color: var(--subtle); font: 7px "IBM Plex Mono", monospace; letter-spacing: .12em; }
+.architecture-coordinates { position: absolute; z-index: 4; top: 16px; left: 18px; display: flex; gap: 12px; color: var(--subtle); font: 7px "IBM Plex Mono", monospace; }
+.architecture-scene { position: absolute; inset: 0; transform-style: preserve-3d; transform: translate3d(var(--scene-x, 0), var(--scene-y, 0), 0) rotateX(var(--scene-rx, 0deg)) rotateY(var(--scene-ry, 0deg)) scale(var(--scene-zoom)); transform-origin: center; transition: transform 380ms cubic-bezier(.22, 1, .36, 1); }
+.architecture-grid { position: absolute; inset: 0; opacity: .35; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 42px 42px; mask-image: radial-gradient(circle, #000 20%, transparent 78%); }
+.architecture-connections { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.architecture-connection { opacity: .72; transition: opacity 240ms ease; }
+.architecture-connection[data-hidden="true"] { opacity: 0; }
+.architecture-connection[data-dimmed="true"] { opacity: .08; }
+.architecture-connection[data-active="true"] { opacity: 1; }
+.architecture-connection-line { fill: none; stroke: var(--line-strong); stroke-width: .18; vector-effect: non-scaling-stroke; stroke-dasharray: 1.2 1.1; }
+.architecture-connection[data-active="true"] .architecture-connection-line { stroke: var(--accent); stroke-width: .34; filter: drop-shadow(0 0 3px var(--accent)); }
+.architecture-connection-hit { fill: none; stroke: transparent; stroke-width: 2; }
+.architecture-packet-dot { fill: var(--accent); filter: drop-shadow(0 0 2px var(--accent)); }
+.architecture-node { --node-rx: 0deg; --node-ry: 0deg; position: absolute; z-index: 5; left: var(--node-x); top: var(--node-y); width: clamp(145px, 15vw, 210px); min-height: 91px; display: grid; align-content: center; gap: 4px; padding: 13px 15px; border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--surface-2) 94%, transparent); color: var(--text); text-align: left; transform-style: preserve-3d; transform: translate(-50%, -50%) translateX(var(--explode-x)) translateZ(var(--node-z)) rotateX(var(--node-rx)) rotateY(var(--node-ry)); transition: transform 300ms cubic-bezier(.22, 1, .36, 1), opacity 240ms ease, border-color 200ms ease, filter 200ms ease; animation: architecture-node-in 520ms both var(--node-delay); }
+.architecture-node:hover, .architecture-node:focus-visible, .architecture-node[data-selected="true"] { border-color: var(--accent); transform: translate(-50%, -50%) translateX(var(--explode-x)) translateZ(calc(var(--node-z) + 28px)) rotateX(var(--node-rx)) rotateY(var(--node-ry)); }
+.architecture-node[data-selected="true"] { box-shadow: 0 16px 36px #0005, inset 3px 0 var(--accent); }
+.architecture-node[data-active="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 24px var(--accent-soft); }
+.architecture-node[data-dimmed="true"] { opacity: .22; filter: grayscale(.7); }
+.architecture-node[data-hidden="true"] { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) translateZ(-80px) scale(.82); }
+.architecture-node-index { color: var(--accent); font: 7px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-node strong { font: 400 20px/1.1 "Instrument Serif", serif; }
+.architecture-node > span:not(.architecture-node-index) { color: var(--muted); font: 8px/1.4 "IBM Plex Mono", monospace; }
+.architecture-node > i { position: absolute; width: 5px; height: 5px; right: 9px; top: 9px; border-radius: 50%; background: var(--line-strong); }
+.architecture-node[data-selected="true"] > i, .architecture-node[data-active="true"] > i { background: var(--accent); }
+.architecture-details { position: relative; z-index: 8; padding: 30px 26px; border-left: 1px solid var(--line); background: var(--bg); overflow: auto; }
+.architecture-details > span, .architecture-evidence > span { color: var(--accent); font: 8px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; }
+.architecture-details h2 { margin: 10px 0 2px; font: 400 35px/1 "Instrument Serif", serif; }
+.architecture-details > strong { color: var(--muted); font: 9px "IBM Plex Mono", monospace; }
+.architecture-details dl { margin: 28px 0; }
+.architecture-details dl div { padding: 15px 0; border-top: 1px solid var(--line); }
+.architecture-details dt { color: var(--subtle); font: 8px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-details dd { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.65; }
+.architecture-details-empty { display: grid; align-content: center; }
+.architecture-details-empty p { color: var(--muted); }
+.architecture-evidence { display: grid; gap: 7px; }
+.architecture-evidence code, .architecture-decision footer code { min-width: 0; overflow-wrap: anywhere; color: var(--muted); font: 8px/1.5 "IBM Plex Mono", monospace; }
+.architecture-evidence a { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.architecture-evidence a:hover code { color: var(--accent); }
+.architecture-code-button { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; padding: 9px 12px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font: 8px "IBM Plex Mono", monospace; }
+.architecture-details small { display: block; margin-top: 18px; color: var(--subtle); font: 8px/1.6 "IBM Plex Mono", monospace; }
+.architecture-flow { padding-bottom: 20px; }
+.architecture-flow .architecture-scene-shell { min-height: 490px; border-bottom: 1px solid var(--line); }
+.architecture-flow-picker { display: flex; gap: 6px; padding: 16px 72px; overflow-x: auto; }
+.architecture-flow-picker button { flex: 0 0 auto; padding: 9px 13px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font: 9px "IBM Plex Mono", monospace; }
+.architecture-flow-picker button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.architecture-step { display: flex; align-items: center; justify-content: space-between; gap: 30px; min-height: 150px; padding: 24px 72px; background: var(--surface); }
+.architecture-step span { color: var(--accent); font: 8px "IBM Plex Mono", monospace; }
+.architecture-step h2 { margin: 5px 0; font: 400 29px "Instrument Serif", serif; }
+.architecture-step p { max-width: 700px; margin: 0 0 6px; color: var(--muted); font-size: 11px; }
+.architecture-step code { color: var(--accent); font: 9px "IBM Plex Mono", monospace; }
+.architecture-step-controls { display: flex; flex: 0 0 auto; gap: 5px; }
+.architecture-step-controls button { display: inline-flex; align-items: center; gap: 5px; min-height: 36px; padding: 8px 11px; border: 1px solid var(--line); background: var(--bg); font: 8px "IBM Plex Mono", monospace; }
+.architecture-step-controls button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.architecture-decisions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 36px 72px; background: radial-gradient(circle at 50% 0, var(--accent-soft), transparent 35%); perspective: 1100px; }
+.architecture-decision { min-width: 0; padding: 25px; border: 1px solid var(--line); background: var(--surface); transition: transform 260ms ease, border-color 260ms ease; transform: rotateY(var(--decision-r, 0deg)); }
+.architecture-decision:nth-child(1) { --decision-r: 1.5deg; }.architecture-decision:nth-child(3) { --decision-r: -1.5deg; }
+.architecture-decision:hover { transform: rotateY(0) translateY(-5px); border-color: var(--accent); }
+.architecture-decision > span { color: var(--accent); font: 8px "IBM Plex Mono", monospace; }
+.architecture-decision > i { float: right; color: var(--subtle); font: normal 7px "IBM Plex Mono", monospace; }
+.architecture-decision h2 { min-height: 68px; margin: 14px 0; font: 400 27px/1.08 "Instrument Serif", serif; }
+.architecture-decision dl { margin: 0; }
+.architecture-decision dl div { padding: 11px 0; border-top: 1px solid var(--line); }
+.architecture-decision dt { color: var(--subtle); font: 7px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-decision dd { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.architecture-decision footer { display: grid; gap: 4px; margin-top: 15px; }
+.architecture-footer-tools { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 18px 72px; border-top: 1px solid var(--line); }
+.architecture-tour-start { display: inline-flex; align-items: center; gap: 8px; border-color: var(--accent); color: var(--accent); }
+.architecture-tour { max-width: 650px; display: flex; align-items: center; gap: 18px; padding: 10px 14px; border-left: 2px solid var(--accent); background: var(--surface); }
+.architecture-tour span { color: var(--accent); font: 7px "IBM Plex Mono", monospace; white-space: nowrap; }
+.architecture-tour strong { font-size: 11px; font-weight: 400; }
+.architecture-tour button { display: inline-flex; gap: 4px; margin-left: auto; }
+.architecture-text-graph { max-width: 620px; color: var(--muted); font-size: 10px; }
+.architecture-text-graph summary { cursor: pointer; color: var(--subtle); font: 8px "IBM Plex Mono", monospace; text-transform: uppercase; }
+.architecture-text-graph ul { columns: 2; padding-left: 16px; }
+.architecture-text-graph li { break-inside: avoid; margin-bottom: 5px; }
+.architecture-explorer-footer { display: flex; align-items: center; gap: 18px; padding: 13px 72px; border-top: 1px solid var(--line); color: var(--subtle); font: 8px "IBM Plex Mono", monospace; }
+.architecture-explorer-footer a, .architecture-explorer-footer button { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; border: 0; background: transparent; color: var(--muted); }
+.architecture-explorer-footer button { margin-left: 0; }
+.architecture-code { position: fixed; z-index: 40; right: max(30px, calc((100vw - 1420px) / 2)); bottom: 30px; width: min(650px, calc(100vw - 60px)); max-height: min(620px, calc(100dvh - 60px)); overflow: auto; border: 1px solid var(--line-strong); background: var(--bg); box-shadow: 0 25px 80px #0009; animation: architecture-code-in 280ms cubic-bezier(.22, 1, .36, 1); }
+.architecture-code-head { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 18px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.architecture-code-head div { display: grid; min-width: 0; }
+.architecture-code-head span { color: var(--accent); font: 7px "IBM Plex Mono", monospace; }
+.architecture-code-head strong { overflow: hidden; color: var(--muted); font: 9px "IBM Plex Mono", monospace; text-overflow: ellipsis; }
+.architecture-code-head button { border: 0; background: transparent; }
+.architecture-code pre { margin: 0; padding: 18px; overflow: auto; background: #0b0e0b; color: #d9dfd6; font: 10px/1.75 "IBM Plex Mono", monospace; tab-size: 2; }
+.architecture-code .code-line { display: inline; }.architecture-code .code-line > i { display: inline-block; width: 28px; color: #667066; font-style: normal; user-select: none; }.architecture-code .code-keyword { color: #72e9a8; }
+.architecture-code > a { display: flex; align-items: center; justify-content: flex-end; gap: 7px; padding: 12px 18px; color: var(--accent); font: 8px "IBM Plex Mono", monospace; }
+@keyframes architecture-open { from { opacity: 0; transform: scale(.88) translateY(15px); } to { opacity: 1; transform: none; } }
+@keyframes architecture-node-in { from { opacity: 0; transform: translate(-50%, -50%) translateZ(-100px) scale(.8); } }
+@keyframes architecture-code-in { from { opacity: 0; transform: translateY(25px) rotateX(4deg); } }
+@keyframes architecture-spin { to { transform: rotate(360deg); } }
+@media (max-width: 1050px) {
+  .architecture-hero, .architecture-stack, .architecture-tabs, .architecture-controls, .architecture-flow-picker, .architecture-step, .architecture-decisions, .architecture-footer-tools, .architecture-explorer-footer { padding-left: 34px; padding-right: 34px; }
+  .architecture-main { grid-template-columns: minmax(0, 1fr) 285px; }
+  .architecture-node { width: 150px; }
+  .architecture-controls { grid-template-columns: 1fr 1fr; }.architecture-view-buttons { grid-column: 1 / -1; justify-content: flex-start; }
+}
+@media (max-width: 760px) {
+  .architecture-overlay { padding: 0; }.architecture-explorer { width: 100%; height: 100dvh; border: 0; }
+  .architecture-hero { min-height: 180px; display: block; padding: 46px 20px 22px; }.architecture-hero h1 { font-size: clamp(42px, 14vw, 64px); }.architecture-source { justify-items: start; margin-top: 18px; padding: 0; text-align: left; }
+  .architecture-stack, .architecture-tabs, .architecture-controls, .architecture-flow-picker, .architecture-step, .architecture-decisions, .architecture-footer-tools, .architecture-explorer-footer { padding-left: 20px; padding-right: 20px; }
+  .architecture-tabs { overflow-x: auto; }.architecture-tabs button { flex: 1 0 auto; padding: 15px 18px; }
+  .architecture-controls { grid-template-columns: 1fr; gap: 13px; }.architecture-view-buttons { grid-column: auto; }
+  .architecture-main { grid-template-columns: 1fr; }
+  .architecture-scene-shell, .architecture-flow .architecture-scene-shell { min-height: 340px; overflow-x: auto; overflow-y: hidden; }
+  .architecture-scene { position: relative; inset: auto; min-width: max-content; height: 340px; display: flex; align-items: center; gap: 14px; padding: 45px 20px 28px; transform: none !important; }
+  .architecture-grid { position: absolute; inset: 0; }.architecture-connections { display: none; }
+  .architecture-node, .architecture-node:hover, .architecture-node:focus-visible, .architecture-node[data-selected="true"], .architecture-node[data-hidden="true"] { position: relative; left: auto; top: auto; flex: 0 0 220px; width: 220px; min-height: 135px; opacity: 1; transform: none; }
+  .architecture-node[data-hidden="true"] { display: none; }.architecture-node[data-dimmed="true"] { opacity: .35; }
+  .architecture-details { min-height: 340px; border-top: 1px solid var(--line); border-left: 0; }
+  .architecture-step { display: block; }.architecture-step-controls { margin-top: 18px; flex-wrap: wrap; }
+  .architecture-decisions { grid-template-columns: 1fr; }.architecture-decision, .architecture-decision:hover { transform: none; }.architecture-decision h2 { min-height: 0; }
+  .architecture-footer-tools { display: grid; }.architecture-tour { align-items: flex-start; flex-wrap: wrap; }.architecture-text-graph { max-width: 100%; }.architecture-text-graph ul { columns: 1; }
+  .architecture-explorer-footer { flex-wrap: wrap; }.architecture-explorer-footer a { margin-left: 0; }
+  .architecture-code { right: 10px; bottom: 10px; width: calc(100vw - 20px); max-height: calc(100dvh - 20px); }
+}
+@media (max-width: 430px) {
+  .architecture-close { top: 10px; margin: 10px 10px -52px 0; }.architecture-hero { padding-top: 60px; }.architecture-hero p { font-size: 11px; }
+  .architecture-stack { flex-wrap: nowrap; overflow-x: auto; }.architecture-controls fieldset > div { overflow-x: auto; flex-wrap: nowrap; }.architecture-controls fieldset button { flex: 0 0 auto; }
+  .architecture-view-buttons button:nth-last-child(2) { flex-basis: 100%; justify-content: center; }
+  .architecture-step h2 { font-size: 25px; }.architecture-step-controls button { flex: 1; justify-content: center; }
+}
+html[data-motion="off"] .architecture-explorer, html[data-motion="off"] .architecture-node, html[data-motion="off"] .architecture-code { animation: none !important; }
+html[data-motion="off"] .architecture-packet-dot { display: none; }
