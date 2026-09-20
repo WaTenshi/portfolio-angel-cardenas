@@ -15,13 +15,33 @@ function splitArguments(source) {
   return values;
 }
 
-function readValue(source, scope, globals) {
+function readAtom(source, scope, globals, functions) {
   const value = source.trim();
   if (/^(['"]).*\1$/.test(value)) return value.slice(1, -1).replace(/\\(['"\\])/g, "$1");
   if (/^-?\d+(?:\.\d+)?$/.test(value)) return Number(value);
+  if (value === "True" || value === "False") return value === "True";
+  const call = value.match(/^([A-Za-z_]\w*)\((.*)\)$/);
+  if (call && functions[call[1]]) return runFunction(functions[call[1]], splitArguments(call[2]), globals, functions);
   if (identifier.test(value) && Object.hasOwn(scope, value)) return scope[value];
   if (identifier.test(value) && Object.hasOwn(globals, value)) return globals[value];
   throw new Error(`NameError: name '${value}' is not defined`);
+}
+
+function readExpression(source, scope, globals, functions) {
+  const expression = source.trim();
+  const binary = expression.match(/^(.+?)\s*(==|!=|\+|-|\*|\/)\s*(.+)$/);
+  if (!binary) return readAtom(expression, scope, globals, functions);
+  const left = readAtom(binary[1], scope, globals, functions);
+  const right = readAtom(binary[3], scope, globals, functions);
+  const operations = {
+    "+": () => left + right,
+    "-": () => left - right,
+    "*": () => left * right,
+    "/": () => left / right,
+    "==": () => left === right,
+    "!=": () => left !== right,
+  };
+  return operations[binary[2]]();
 }
 
 function pythonRepr(value) {
@@ -31,20 +51,34 @@ function pythonRepr(value) {
   return String(value);
 }
 
-function executeLine(line, scope, globals, output) {
+function executeLine(line, scope, globals, functions, output) {
   const statement = line.trim();
   if (!statement || statement.startsWith("#")) return;
   const append = statement.match(/^([A-Za-z_]\w*)\.append\((.*)\)$/);
   if (append) {
     const target = globals[append[1]] ?? scope[append[1]];
     if (!Array.isArray(target)) throw new Error(`AttributeError: '${append[1]}' has no attribute 'append'`);
-    target.push(readValue(append[2], scope, globals));
+    target.push(readExpression(append[2], scope, globals, functions));
     return;
   }
   if (/^[A-Za-z_]\w*\.append$/.test(statement)) return;
   const print = statement.match(/^print\((.*)\)$/);
-  if (print) { output.push(pythonRepr(readValue(print[1], scope, globals))); return; }
+  if (print) { output.push(pythonRepr(readExpression(print[1], scope, globals, functions))); return; }
   throw new Error(`SyntaxError: unsupported statement '${statement}'`);
+}
+
+function runFunction(fn, rawArgs, globals, functions) {
+  const args = rawArgs.map((item) => readExpression(item, globals, globals, functions));
+  if (args.length !== fn.params.length) throw new Error(`TypeError: function received ${args.length} arguments`);
+  const scope = Object.fromEntries(fn.params.map((param, position) => [param, args[position]]));
+  for (const line of fn.body) {
+    const assignment = line.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+    if (assignment) { scope[assignment[1]] = readExpression(assignment[2], scope, globals, functions); continue; }
+    const returned = line.match(/^return\s+(.+)$/);
+    if (returned) return readExpression(returned[1], scope, globals, functions);
+    executeLine(line, scope, globals, functions, []);
+  }
+  return null;
 }
 
 /** Executes the small, deliberately isolated Python subset used by Lab challenges. */
@@ -74,19 +108,21 @@ export function runPythonSubset(source) {
       }
       const listAssignment = statement.match(/^([A-Za-z_]\w*)\s*=\s*\[(.*)\]\s*$/);
       if (listAssignment) {
-        globals[listAssignment[1]] = splitArguments(listAssignment[2]).map((item) => readValue(item, globals, globals));
+        globals[listAssignment[1]] = splitArguments(listAssignment[2]).map((item) => readExpression(item, globals, globals, functions));
         continue;
       }
+      const scalarAssignment = statement.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+      if (scalarAssignment) { globals[scalarAssignment[1]] = readExpression(scalarAssignment[2], globals, globals, functions); continue; }
       const call = statement.match(/^([A-Za-z_]\w*)\((.*)\)$/);
       if (call && functions[call[1]]) {
         const fn = functions[call[1]];
-        const args = splitArguments(call[2]).map((item) => readValue(item, globals, globals));
+        const args = splitArguments(call[2]).map((item) => readExpression(item, globals, globals, functions));
         if (args.length !== fn.params.length) throw new Error(`TypeError: ${call[1]}() received ${args.length} arguments`);
         const scope = Object.fromEntries(fn.params.map((param, position) => [param, args[position]]));
-        fn.body.forEach((line) => executeLine(line, scope, globals, output));
+        fn.body.forEach((line) => executeLine(line, scope, globals, functions, output));
         continue;
       }
-      executeLine(statement, globals, globals, output);
+      executeLine(statement, globals, globals, functions, output);
     }
     return { ok: true, stdout: output.join("\n"), error: null };
   } catch (error) {

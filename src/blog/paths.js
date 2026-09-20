@@ -12,7 +12,11 @@ export function routeFromPath(pathname, base = siteBase) {
   if (path === 'lab/dum') return { type: 'lab-dum' };
   if (path === 'lab/debug') return { type: 'lab-debug-index' };
   if (path === 'lab/debug/python/basic') return { type: 'lab-debug', challenge: 'python-basic-01' };
+  if (path === 'lab/debug/python/intermediate') return { type: 'lab-debug', challenge: 'python-intermediate-01' };
+  if (path === 'lab/debug/python/hard') return { type: 'lab-debug', challenge: 'python-hard-01' };
   if (path === 'lab/debug/javascript/basic') return { type: 'lab-debug', challenge: 'javascript-basic-01' };
+  if (path === 'lab/debug/javascript/intermediate') return { type: 'lab-debug', challenge: 'javascript-intermediate-01' };
+  if (path === 'lab/debug/javascript/hard') return { type: 'lab-debug', challenge: 'javascript-hard-01' };
   const match = path.match(/^blog\/([a-z0-9]+(?:-[a-z0-9]+)*)$/);
   return match ? { type: 'article', slug: match[1] } : { type: 'not-found' };
 }

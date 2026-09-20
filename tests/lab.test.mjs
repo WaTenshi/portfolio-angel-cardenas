@@ -17,7 +17,11 @@ test('lab routes work as direct GitHub Pages routes', () => {
   for (const suffix of ['lab/dum', 'lab/dum/', 'lab/dum/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-dum' });
   for (const suffix of ['lab/debug', 'lab/debug/', 'lab/debug/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug-index' });
   for (const suffix of ['lab/debug/python/basic', 'lab/debug/python/basic/', 'lab/debug/python/basic/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug', challenge: 'python-basic-01' });
+  for (const suffix of ['lab/debug/python/intermediate', 'lab/debug/python/intermediate/', 'lab/debug/python/intermediate/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug', challenge: 'python-intermediate-01' });
+  for (const suffix of ['lab/debug/python/hard', 'lab/debug/python/hard/', 'lab/debug/python/hard/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug', challenge: 'python-hard-01' });
   for (const suffix of ['lab/debug/javascript/basic', 'lab/debug/javascript/basic/', 'lab/debug/javascript/basic/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug', challenge: 'javascript-basic-01' });
+  for (const suffix of ['lab/debug/javascript/intermediate', 'lab/debug/javascript/intermediate/', 'lab/debug/javascript/intermediate/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug', challenge: 'javascript-intermediate-01' });
+  for (const suffix of ['lab/debug/javascript/hard', 'lab/debug/javascript/hard/', 'lab/debug/javascript/hard/index.html']) assert.deepEqual(routeFromPath(base + suffix, base), { type: 'lab-debug', challenge: 'javascript-hard-01' });
 });
 
 test('lab experiment configuration remains unique and routable', () => {
@@ -49,6 +53,7 @@ test('controlled JavaScript engine evaluates behavior and blocks browser facilit
 });
 
 test('challenge registry has unique routes and complete, challenge-specific narratives', () => {
+  assert.equal(debugChallenges.length, 6);
   assert.equal(new Set(debugChallenges.map(({ id }) => id)).size, debugChallenges.length);
   assert.equal(new Set(debugChallenges.map(({ route }) => route)).size, debugChallenges.length);
   assert.equal(getDebugChallenge('javascript-basic-01'), javascriptChallenge);
@@ -59,6 +64,22 @@ test('challenge registry has unique routes and complete, challenge-specific narr
     assert(item.narrative.completion.es && item.narrative.completion.en);
   }
   assert.notDeepEqual(pythonChallenge.narrative.angel, javascriptChallenge.narrative.angel);
+});
+
+test('intermediate and hard chambers execute distinct multi-level behavior', () => {
+  const solutions = {
+    'python-intermediate-01': `def active_sessions(total, expired):\n    return total - expired\n\nprint(active_sessions(48, 13))`,
+    'python-hard-01': `def release_score(passed, failed):\n    stable = passed - failed\n    return stable * 10\n\nprint(release_score(18, 3))`,
+    'javascript-intermediate-01': `const testsPassing = true;\nconst reviewed = true;\nfunction canDeploy(testsPassing, reviewed) {\n  return testsPassing === reviewed;\n}\nconsole.log(canDeploy(testsPassing, reviewed));`,
+    'javascript-hard-01': `function calculateCapacity(nodes, reserve) {\n  const available = nodes - reserve;\n  return available * 2;\n}\nconsole.log(calculateCapacity(12, 2));`,
+  };
+  for (const challenge of debugChallenges.filter(({ difficulty }) => difficulty !== 'basic')) {
+    const evaluate = challenge.language === 'python' ? evaluateChallenge : evaluateJavaScriptChallenge;
+    assert.equal(evaluate(challenge.initialCode, challenge).passed, false, `${challenge.id} must begin broken`);
+    const result = evaluate(solutions[challenge.id], challenge);
+    assert.equal(result.passed, true, `${challenge.id}: ${result.error || result.stdout}`);
+    assert.equal(result.stdout, challenge.expectedOutput);
+  }
 });
 
 test('controlled engine reports failures and blocks unsafe facilities', () => {
@@ -82,6 +103,6 @@ test('terminal exposes Lab and Debug Challenge routes without changing DUM behav
 });
 
 test('production build emits direct Lab pages and local artwork instructions', () => {
-  for (const path of ['dist/lab/index.html', 'dist/lab/dum/index.html', 'dist/lab/debug/index.html', 'dist/lab/debug/python/basic/index.html', 'dist/lab/debug/javascript/basic/index.html']) assert(existsSync(path), `${path} must exist`);
+  for (const path of ['dist/lab/index.html', 'dist/lab/dum/index.html', 'dist/lab/debug/index.html', ...debugChallenges.map(({ route }) => `dist/lab/${route}/index.html`)]) assert(existsSync(path), `${path} must exist`);
   assert.match(readFileSync('src/assets/lab/README.md', 'utf8'), /chimuelo-debug-examiner\.png/);
 });

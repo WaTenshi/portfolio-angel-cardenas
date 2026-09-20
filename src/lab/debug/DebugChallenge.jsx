@@ -118,7 +118,7 @@ export default function DebugChallenge({ challenge, language, motionEnabled, onB
   return (
     <main className="debug-challenge" id="lab-main" tabIndex={-1}>
       <div className="debug-ambient-code" aria-hidden="true"><span>{challenge.medalMark}</span><i /><i /><i /><i /></div>
-      <header className="debug-header"><button type="button" onClick={onBack}><FiArrowLeft />CHAMBERS</button><div><span>TENSHI LAB</span><strong>TEST CHAMBER {challenge.chamber}</strong></div><b>{challenge.language.toUpperCase()} / BASIC</b></header>
+      <header className="debug-header"><button type="button" onClick={onBack}><FiArrowLeft />CHAMBERS</button><div><span>TENSHI LAB</span><strong>TEST CHAMBER {challenge.chamber}</strong></div><b>{challenge.language.toUpperCase()} / {challenge.difficulty.toUpperCase()}</b></header>
       <section className="debug-stats" aria-label={language === "es" ? "Estado de la prueba" : "Test status"}>
         <div><span>SCORE</span><strong>{score}</strong>{scoreDelta && <em key={`${scoreDelta}-${score}`}>{scoreDelta}</em>}</div>
         <div><span>HINTS</span><strong>{String(hintIndex).padStart(2, "0")}</strong></div>

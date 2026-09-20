@@ -39,9 +39,13 @@ function runFunction(fn, rawArgs, globals, functions) {
   const values = rawArgs.map((argument) => readExpression(argument, globals, globals, functions));
   if (values.length !== fn.params.length) throw new Error(`TypeError: expected ${fn.params.length} arguments`);
   const scope = Object.fromEntries(fn.params.map((param, index) => [param, values[index]]));
-  const returnLine = fn.body.find((line) => /^return\s+/.test(line));
-  if (!returnLine) return undefined;
-  return readExpression(returnLine.replace(/^return\s+/, ""), scope, globals, functions);
+  for (const line of fn.body) {
+    const declaration = line.match(/^(?:const|let)\s+([A-Za-z_$][\w$]*)\s*=\s*(.+);$/);
+    if (declaration) { scope[declaration[1]] = readExpression(declaration[2], scope, globals, functions); continue; }
+    if (/^return\s+/.test(line)) return readExpression(line.replace(/^return\s+/, ""), scope, globals, functions);
+    throw new Error(`SyntaxError: unsupported function statement '${line}'`);
+  }
+  return undefined;
 }
 
 export function runJavaScriptSubset(source) {

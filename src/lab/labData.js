@@ -27,12 +27,12 @@ export const experiments = [
     type: "debug",
     href: labDebugPath,
     title: "DEBUG CHALLENGE",
-    eyebrow: { es: "Python + JavaScript / Básico", en: "Python + JavaScript / Basic" },
+    eyebrow: { es: "Python + JavaScript / 3 niveles", en: "Python + JavaScript / 3 levels" },
     description: {
       es: "Encuentra el bug. Corrige el código. Sobrevive al examinador.",
       en: "Find the bug. Fix the code. Survive the examiner.",
     },
-    meta: "TEST CHAMBERS 01—02",
+    meta: "TEST CHAMBERS 01—06",
     status: "available",
   },
 ];
