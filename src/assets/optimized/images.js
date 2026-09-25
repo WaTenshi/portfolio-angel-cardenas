@@ -14,9 +14,12 @@ import video640 from './video-640.webp';
 import video1280 from './video-1280.webp';
 import calzadospaula640 from './calzadospaula-640.webp';
 import calzadospaula1280 from './calzadospaula-1280.webp';
+import mihallazgo640 from './mihallazgo-640.webp';
+import mihallazgo1280 from './mihallazgo-1280.webp';
 
 export default {
 calzadospaula: { src: calzadospaula1280, srcSet: `${calzadospaula640} 640w, ${calzadospaula1280} 1280w`, width: 1280, height: 889 },
+mihallazgo: { src: mihallazgo1280, srcSet: `${mihallazgo640} 640w, ${mihallazgo1280} 1280w`, width: 1280, height: 889 },
 profile: { src: profile800, srcSet: `${profile400} 400w, ${profile800} 800w`, width: 800, height: 800 },
 journalfit: { src: journalfit1280, srcSet: `${journalfit640} 640w, ${journalfit1280} 1280w`, width: 1280, height: 889 },
 boda: { src: boda1280, srcSet: `${boda640} 640w, ${boda1280} 1280w`, width: 1280, height: 889 },

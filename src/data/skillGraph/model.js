@@ -21,6 +21,7 @@ export const skills = [
   skill("javascript", "JavaScript", "frontend", "javascript", "core", "Interacciones, lógica de producto y herramientas ejecutadas en el navegador.", "Browser-based interaction, product logic, and tooling.", ["js"]),
   skill("typescript", "TypeScript", "frontend", "typescript", "core", "Interfaces y contratos explícitos para productos web y servicios.", "Explicit interfaces and contracts for web products and services.", ["ts"]),
   skill("react", "React", "frontend", "react", "core", "Interfaces de producto componibles para web y superficies públicas.", "Composable product interfaces for web and public surfaces."),
+  skill("astro", "Astro", "frontend", "code", "supporting", "Sitios orientados a contenido y rendimiento con islas interactivas.", "Content- and performance-oriented websites with interactive islands."),
   skill("vite", "Vite", "frontend", "vite", "supporting", "Tooling de desarrollo y builds estáticos rápidos.", "Fast development tooling and static builds."),
   skill("tailwind", "Tailwind CSS", "frontend", "tailwind", "extended", "Utilidades de estilos para experiencias visuales específicas.", "Style utilities for focused visual experiences."),
   skill("react-native", "React Native", "mobile", "react", "core", "Aplicaciones móviles multiplataforma conectadas a servicios reales.", "Cross-platform mobile applications connected to real services.", ["rn"]),
@@ -58,6 +59,7 @@ export const skills = [
 
 const publicEvidence = (repo, commit, files) => ({ source: "github", visibility: "public", repo, commit, files });
 const privateEvidence = () => ({ source: "connector", visibility: "private", verified: true });
+const clientEvidence = () => ({ source: "client", visibility: "private", verified: true });
 const portfolioEvidence = (files = ["src/data/portfolio/experience.js"]) => ({
   source: "portfolio", visibility: "public", repo: "WaTenshi/portfolio-angel-cardenas", commit: "5973788fe90bdd221412f53a24458e768c587aa0", files,
 });
@@ -68,6 +70,7 @@ const sources = {
   consultora: (files) => publicEvidence("WaTenshi/consultora-psicologica", "c98278b17974d2ab12d78f8d90933efbcef2f571", files),
   peluqueria: (files) => publicEvidence("WaTenshi/susanariquelme-peluqueria", "353fb4b34518579af0c10a8e991fe8ae17fb937d", files),
   calzados: () => privateEvidence(),
+  hallazgo: () => clientEvidence(),
   certificados: (files) => publicEvidence("WaTenshi/sistema-certificados", "63cfd551d00d8c94e0c892da9b0911673dc0499f", files),
   boda: (files) => publicEvidence("WaTenshi/invitacion-boda-mariajose-cristopher", "2691ba4bdff3f0753e1c12616f3366a6a6d8523d", files),
   lector: () => privateEvidence(),
@@ -99,6 +102,7 @@ export const connections = [
   p("typescript", "calzados-paula", sources.calzados()), p("vite", "calzados-paula", sources.calzados()),
   p("supabase", "calzados-paula", sources.calzados()), p("postgresql", "calzados-paula", sources.calzados()),
   p("cloudflare", "calzados-paula", sources.calzados()), p("zod", "calzados-paula", sources.calzados()), p("github-actions", "calzados-paula", sources.calzados()),
+  p("astro", "mihallazgo", sources.hallazgo()), p("react", "mihallazgo", sources.hallazgo()), p("supabase", "mihallazgo", sources.hallazgo()),
   p("html", "certificados", sources.certificados(["index.html"]), "workspace-ui"), p("css", "certificados", sources.certificados(["src/styles.css"]), "workspace-ui"), p("react", "certificados", sources.certificados(["package.json", "src/App.tsx"]), "workspace-ui"),
   p("typescript", "certificados", sources.certificados(["src/App.tsx", "src/types.ts"]), "workspace-ui"), p("vite", "certificados", sources.certificados(["vite.config.ts"]), "workspace-ui"), p("excel", "certificados", sources.certificados(["src/services/excel.ts"]), "excel"),
   p("sheetjs", "certificados", sources.certificados(["package.json", "src/services/excel.ts"]), "excel"), p("jspdf", "certificados", sources.certificados(["src/services/pngPdf.ts"]), "png-pipeline"), p("html2canvas", "certificados", sources.certificados(["src/services/word.ts"]), "png-pipeline"),
@@ -120,7 +124,7 @@ const ecosystem = (from, to, evidence) => ({
 export const skillConnections = [
   ecosystem("react", "typescript", sources.landing(["package.json"])), ecosystem("react", "vite", sources.landing(["package.json"])),
   ecosystem("react-native", "expo", sources.journalfit()), ecosystem("react-native", "async-storage", sources.journalfit()),
-  ecosystem("supabase", "postgresql", sources.calzados()), ecosystem("firebase", "react", sources.consultora(["package.json"])),
+  ecosystem("supabase", "postgresql", sources.calzados()), ecosystem("astro", "react", sources.hallazgo()), ecosystem("firebase", "react", sources.consultora(["package.json"])),
   ecosystem("php", "mysql", portfolioEvidence()), ecosystem("python", "django", portfolioEvidence()), ecosystem("python", "flask", portfolioEvidence()), ecosystem("python", "pandas", portfolioEvidence()),
   ecosystem("excel", "sheetjs", sources.certificados(["src/services/excel.ts"])), ecosystem("jspdf", "jszip", sources.certificados(["src/services/pngPdf.ts"])),
 ];

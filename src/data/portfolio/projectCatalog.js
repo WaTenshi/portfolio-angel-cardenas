@@ -34,6 +34,14 @@ export const projectCatalog = [
     tags: ["React", "TypeScript", "Supabase", "Cloudflare"], live: "https://calzadospaula.cl",
   },
   {
+    id: "mihallazgo", title: "Hallazgo Beauty & Care", category: "clients", status: "production",
+    description: {
+      es: "Sitio comercial para distribuidora de belleza y cuidado personal, con catálogo de productos, navegación editorial y acceso interno para el equipo.",
+      en: "Commercial website for a beauty and personal care distributor, featuring a product catalog, editorial navigation, and private team access.",
+    },
+    tags: ["Astro", "React", "Supabase", "Responsive"], live: "https://mihallazgo.cl",
+  },
+  {
     id: "certificados", number: "04", title: "Sistema de Certificados", date: "May 2026",
     description: {
       es: "Herramienta para cargar datos desde Excel, previsualizar certificados y generarlos de forma masiva en PDF.",

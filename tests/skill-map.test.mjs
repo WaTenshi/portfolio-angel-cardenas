@@ -58,6 +58,8 @@ test("derived filters, counters, priorities, inverse relations, and aliases stay
   assert.equal(inverse["skill:react"].length, allConnections.filter((edge) => edge.from.id === "react" || edge.to.id === "react").length);
   assert.equal(getVisualPriority("skill", "react").degree, inverse["skill:react"].length);
   assert.equal(searchEntities("rn", "en")[0].id, "react-native");
+  assert.equal(searchEntities("hallazgo", "es")[0].id, "mihallazgo");
+  assert(filterGraph({ context: "production" }).projects.some(({ id }) => id === "mihallazgo"));
 });
 
 test("terminal exposes the textual summary and skill map actions", () => {

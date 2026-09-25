@@ -63,7 +63,7 @@ const copy = {
     },
     stats: [
       ["5", "roles profesionales"],
-      ["6", "proyectos destacados"],
+      ["7", "proyectos destacados"],
       ["2", "plataformas · web + mobile"],
       ["360°", "visión de producto"],
     ],
@@ -164,7 +164,7 @@ const copy = {
     },
     stats: [
       ["5", "professional roles"],
-      ["6", "featured projects"],
+      ["7", "featured projects"],
       ["2", "platforms · web + mobile"],
       ["360°", "product perspective"],
     ],

@@ -2,7 +2,7 @@
 
 ## Scope
 
-The graph is the evidence layer for the six projects currently visible in the portfolio and the five professional roles. It deliberately excludes hidden, empty, superseded, and unrelated projects. The visual layer consumes IDs and never imports React components into the data model.
+The graph is the evidence layer for the seven projects currently visible in the portfolio and the five professional roles. It deliberately excludes hidden, empty, superseded, and unrelated projects. The visual layer consumes IDs and never imports React components into the data model.
 
 The browser receives public repository evidence and an opaque `verified private source` marker only. Private repository names, commits, paths, fragments, and endpoints are not part of the client model or the public serializer.
 
@@ -16,6 +16,7 @@ The browser receives public repository evidence and an opaque `verified private 
 | `WaTenshi/sistema-certificados` | `63cfd551d00d8c94e0c892da9b0911673dc0499f` | React/TypeScript workspace, spreadsheet import and local document pipelines |
 | `WaTenshi/susanariquelme-peluqueria` | `353fb4b34518579af0c10a8e991fe8ae17fb937d` | React/TypeScript/Vite, Firebase, Cloudinary, Excel and deployment |
 | `WaTenshi/invitacion-boda-mariajose-cristopher` | `2691ba4bdff3f0753e1c12616f3366a6a6d8523d` | React/Vite, Tailwind and deployment |
+| Verified client source (`mihallazgo.cl`) | not serialized | Astro, React and Supabase in a production client project |
 | Private connector sources | not serialized | Mobile, data, cloud and production relations shown only as verified private evidence |
 
 ## Accepted and rejected relations
@@ -27,7 +28,7 @@ Rejected from the visible graph:
 - SRLAR and TenshiGPT.
 - Psicóloga Kimberly and Invitación Susana.
 - Video Player Tenshi and any other hidden portfolio entry.
-- Empty repositories and repositories without a relation to one of the six visible projects or five roles.
+- Empty repositories and repositories without a relation to one of the seven visible projects or five roles.
 - Unverified percentages, proficiency scores, and generic technology claims.
 
 ## Architecture
