@@ -5,13 +5,16 @@ import {
   FiAward,
   FiBookOpen,
   FiCode,
+  FiCpu,
   FiLinkedin,
   FiMenu,
   FiMoon,
   FiPause,
   FiPlay,
+  FiRadio,
   FiSend,
   FiSun,
+  FiZap,
   FiX,
 } from "react-icons/fi";
 import { SiFigma } from "react-icons/si";
@@ -28,8 +31,10 @@ import images from "./assets/optimized/images";
 import { experience, projects } from "./data/portfolio/index.js";
 import { areas, skills } from "./data/skillGraph/index.js";
 import { labDebugPath, labPath } from "./lab/labData.js";
+import { createTacticalAudio } from "./components/tour/tourAudio.js";
 
 const ProjectArchitectureExplorer = lazy(() => import("./components/architecture/ProjectArchitectureExplorer.jsx"));
+const TacticalTour = lazy(() => import("./components/tour/TacticalTour.jsx"));
 const architectureIds = new Set(["journalfit", "consultora", "certificados"]);
 const architectureViews = new Set(["architecture", "data-flow", "decisions"]);
 
@@ -99,6 +104,9 @@ const copy = {
     motionOn: "Pausar animaciones",
     motionOff: "Activar animaciones",
     motionReduced: "Movimiento reducido por tu sistema",
+    tour: "TOUR",
+    tourStart: "Iniciar tour guiado",
+    tourLoading: "CONECTANDO CANAL TÁCTICO",
     lightTheme: "Activar tema claro",
     darkTheme: "Activar tema oscuro",
     backTop: "Volver arriba",
@@ -119,10 +127,19 @@ const copy = {
       close: "Cerrar certificado",
     },
     blogPromo: {
-      label: "NOTAS / BLOG",
-      title: "También escribo sobre lo que construyo.",
-      description: "Ideas, procesos y aprendizajes detrás de cada proyecto.",
+      label: "BITÁCORA / FIELD NOTES",
+      title: "Ideas detrás del código.",
+      description: "Decisiones de arquitectura, procesos de producto y aprendizajes honestos que no caben en una tarjeta de proyecto.",
       action: "Explorar el blog",
+      topics: ["Arquitectura", "Producto", "Aprendizajes"],
+    },
+    labPromo: {
+      label: "TENSHI LAB / DIVISIÓN EXPERIMENTAL",
+      title: "Código que se puede tocar.",
+      description: "Desafíos de debugging con Chimuelo, experimentos de DOM y pequeñas experiencias donde el portfolio se vuelve jugable.",
+      action: "Entrar al Lab",
+      status: "02 EXPERIENCIAS / ONLINE",
+      topics: ["Debug Challenge", "DUM", "Chimuelo online"],
     },
     figmaSoon: "PRÓXIMAMENTE",
     figmaTitle: "Caso de diseño",
@@ -138,7 +155,8 @@ const copy = {
       messagePlaceholder: "Cuéntame brevemente en qué puedo ayudarte.",
       send: "Enviar mensaje",
       hint: "Al enviar se abrirá tu aplicación de correo con el mensaje preparado.",
-      linkedin: "También puedes encontrarme en LinkedIn",
+      linkedin: "Revisa mi trayectoria completa en LinkedIn",
+      linkedinEyebrow: "CONTEXTO PROFESIONAL",
     },
     footer: "Diseñado y desarrollado por Ángel Cárdenas.",
   },
@@ -200,6 +218,9 @@ const copy = {
     motionOn: "Pause animations",
     motionOff: "Enable animations",
     motionReduced: "Reduced motion enabled by your system",
+    tour: "TOUR",
+    tourStart: "Start guided tour",
+    tourLoading: "CONNECTING TACTICAL CHANNEL",
     lightTheme: "Enable light theme",
     darkTheme: "Enable dark theme",
     backTop: "Back to top",
@@ -220,10 +241,19 @@ const copy = {
       close: "Close certificate",
     },
     blogPromo: {
-      label: "NOTES / BLOG",
-      title: "I also write about what I build.",
-      description: "Ideas, processes, and lessons behind each project.",
+      label: "LOGBOOK / FIELD NOTES",
+      title: "Ideas behind the code.",
+      description: "Architecture decisions, product processes, and honest lessons that do not fit inside a project card.",
       action: "Explore the blog",
+      topics: ["Architecture", "Product", "Lessons"],
+    },
+    labPromo: {
+      label: "TENSHI LAB / EXPERIMENTAL DIVISION",
+      title: "Code you can interact with.",
+      description: "Debugging challenges with Chimuelo, DOM experiments, and small experiences where the portfolio becomes playable.",
+      action: "Enter the Lab",
+      status: "02 EXPERIENCES / ONLINE",
+      topics: ["Debug Challenge", "DUM", "Chimuelo online"],
     },
     figmaSoon: "COMING SOON",
     figmaTitle: "Design case study",
@@ -239,7 +269,8 @@ const copy = {
       messagePlaceholder: "Tell me briefly how I can help.",
       send: "Send message",
       hint: "Submitting will open your email app with the message prepared.",
-      linkedin: "You can also find me on LinkedIn",
+      linkedin: "Review my full professional journey on LinkedIn",
+      linkedinEyebrow: "PROFESSIONAL CONTEXT",
     },
     footer: "Designed and developed by Ángel Cárdenas.",
   },
@@ -331,10 +362,15 @@ const certificates = [
 
 // Future Figma cases remain in copy; enable this section when real cases are available.
 const showFigma = false;
+const certificateTourTargets = {
+  "01": "certificate-mobile",
+  "02": "certificate-ai",
+  "03": "certificate-data",
+};
 
-function SectionHeader({ content }) {
+function SectionHeader({ content, tourId }) {
   return (
-    <Reveal className="section-heading">
+    <Reveal className="section-heading" data-tour-id={tourId}>
       <span className="section-kicker"><i />{content[0]}</span>
       <h2>{content[1]}</h2>
       <p>{content[2]}</p>
@@ -357,8 +393,12 @@ function App() {
   });
   const [architectureNode, setArchitectureNode] = useState(() => new URLSearchParams(window.location.search).get("node"));
   const [architectureOrigin, setArchitectureOrigin] = useState(null);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourAudio, setTourAudio] = useState(null);
   const certificateTrigger = useRef(null);
   const architectureTrigger = useRef(null);
+  const tourTrigger = useRef(null);
+  const tourAudioRef = useRef(null);
   const { enabled, reduced, toggleMotion, scrollBehavior } = useMotion();
   const t = copy[language];
 
@@ -408,6 +448,8 @@ function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
+
+  useEffect(() => () => tourAudioRef.current?.destroy(), []);
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior });
@@ -498,6 +540,26 @@ function App() {
     window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(data.get("subject"))}&body=${encodeURIComponent(body)}`;
   };
 
+  const startTacticalTour = (event) => {
+    tourTrigger.current = event.currentTarget;
+    setMenuOpen(false);
+    tourAudioRef.current?.destroy();
+    const session = createTacticalAudio();
+    tourAudioRef.current = session;
+    session.ring();
+    setTourAudio(session);
+    setTourOpen(true);
+    window.dispatchEvent(new CustomEvent("portfolio:tour", { detail: { event: "guided_tour_started" } }));
+  };
+
+  const closeTacticalTour = () => {
+    tourAudioRef.current?.destroy();
+    tourAudioRef.current = null;
+    setTourOpen(false);
+    setTourAudio(null);
+    requestAnimationFrame(() => tourTrigger.current?.focus({ preventScroll: true }));
+  };
+
   return (
     <div className="site-shell portfolio-shell">
       <a className="skip-link" href="#main">{t.skip}</a>
@@ -510,7 +572,8 @@ function App() {
               <a key={t.navIds[index]} href={`#${t.navIds[index]}`} aria-current={activeSection === t.navIds[index] ? "location" : undefined} onClick={(event) => navigate(event, t.navIds[index])}>{item}</a>
             ))}
           </nav>
-          <a className="header-lab-link" href={labPath}>LAB<i aria-hidden="true" /></a>
+          <button className="header-tour-button" type="button" onClick={startTacticalTour} aria-label={t.tourStart} aria-haspopup="dialog"><FiRadio aria-hidden="true" /><span>{t.tour}</span><i aria-hidden="true" /></button>
+          <a className="header-lab-link" href={labPath}><FiZap aria-hidden="true" /><span>LAB</span><i aria-hidden="true" /></a>
           <div className="header-actions">
             <button className="utility-button language-button" onClick={() => setLanguage(language === "es" ? "en" : "es")} aria-label={language === "es" ? "Switch to English" : "Cambiar a español"}>{language === "es" ? "EN" : "ES"}</button>
             <button className="utility-button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? t.lightTheme : t.darkTheme} title={theme === "dark" ? t.lightTheme : t.darkTheme}>{theme === "dark" ? <FiSun /> : <FiMoon />}</button>
@@ -524,11 +587,11 @@ function App() {
         <section className="hero" id="home" data-motion-region>
           <div className="hero-topline"><span><i className="status-dot ambient-loop" />{t.available}</span><span>{t.profileLabel}</span></div>
           <div className="hero-layout">
-            <div className="hero-copy">
+            <div className="hero-copy" data-tour-id="hero">
               <span className="hero-role">{t.role}<span className="role-line" /></span>
               <h1><span>Ángel</span><em>Cárdenas<span className="name-period">.</span></em></h1>
               <Reveal delay={80} className="hero-description"><p className="hero-intro">{t.intro}</p><p className="hero-muted">{t.introMuted}</p></Reveal>
-              <Reveal delay={160} className="hero-actions"><a className="primary-button" href="#projects" onClick={(event) => navigate(event, "projects")}>{t.viewProjects}<FiArrowUpRight /></a><a className="text-button" href="#contact" onClick={(event) => navigate(event, "contact")}>{t.contact}<span>↗</span></a></Reveal>
+              <Reveal delay={160} className="hero-actions"><a className="primary-button" href="#projects" onClick={(event) => navigate(event, "projects")}>{t.viewProjects}<FiArrowUpRight /></a><a className="text-button" href="#contact" onClick={(event) => navigate(event, "contact")}>{t.contact}<span>↗</span></a><button className="text-button hero-tour-button" type="button" onClick={startTacticalTour} aria-haspopup="dialog"><FiRadio aria-hidden="true" />{t.tourStart}</button></Reveal>
             </div>
             <aside className="profile-stage">
               <div className="profile-orbit orbit-one ambient-loop" aria-hidden="true"><i /></div>
@@ -545,10 +608,10 @@ function App() {
         </section>
 
         <section className="content-section projects-section" id="projects">
-          <div className="heading-with-meta"><SectionHeader content={t.section.projects} /><span className="section-side-note">{t.selected}<FiArrowDown /></span></div>
+          <div className="heading-with-meta"><SectionHeader content={t.section.projects} tourId="projects" /><span className="section-side-note">{t.selected}<FiArrowDown /></span></div>
           {["clients", "personal"].map((group) => (
             <section className={`project-group project-group-${group}`} key={group} aria-labelledby={`projects-${group}-title`}>
-              <Reveal className="project-group-heading">
+              <Reveal className="project-group-heading" data-tour-id={group === "clients" ? "projects-production" : "projects-personal"}>
                 <h3 id={`projects-${group}-title`}>{t.projectGroups[group].title}</h3>
                 <p>{t.projectGroups[group].description}</p>
               </Reveal>
@@ -570,7 +633,7 @@ function App() {
         </section>
 
         <section className="content-section experience-section" id="experience">
-          <div className="heading-with-meta"><SectionHeader content={t.section.experience} /><span className="section-side-note">{t.experienceMeta}</span></div>
+          <div className="heading-with-meta"><SectionHeader content={t.section.experience} tourId="experience" /><span className="section-side-note">{t.experienceMeta}</span></div>
           <div className="experience-list">
             {experience.map((job, index) => (
               <Reveal key={job.company} delay={index * 80}>
@@ -584,19 +647,19 @@ function App() {
         </section>
 
         <section className="content-section about-section" id="about">
-          <SectionHeader content={t.section.about} />
+          <SectionHeader content={t.section.about} tourId="about" />
           <div className="about-grid"><Reveal className="about-copy">{t.aboutText.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</Reveal><Reveal delay={80}><dl className="about-list">{t.aboutDetails.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></Reveal></div>
         </section>
 
         <section className="content-section skill-map-section" id="stack">
-          <SectionHeader content={t.section.stack} />
+          <SectionHeader content={t.section.stack} tourId="stack" />
           <SkillMapLoader language={language} motionEnabled={enabled} onOpenArchitecture={(project, node, trigger) => openArchitecture(project, { currentTarget: trigger }, node)} />
         </section>
 
         <section className="content-section certificates-section" id="certificates">
           <SectionHeader content={t.section.certificates} />
           <div className="certificates-featured">{certificates.filter((certificate) => certificate.featured).map((certificate, index) => (
-            <Reveal key={certificate.title} delay={index * 80}><article className="certificate-card"><div className="certificate-top"><span>{certificate.number}</span><FiAward /></div><div className="certificate-meta"><span>{t.certificateLabels.featured}</span><span>{certificate.date}</span></div><h3>{certificate.title}</h3><h4>{certificate.issuer}</h4><p>{certificate.description[language]}</p><div className="certificate-skills"><strong>{t.certificateLabels.skills}</strong><div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></div><button className="certificate-link" type="button" onClick={(event) => openCertificate(certificate, event)}>{t.certificateLabels.view}<FiArrowUpRight /></button></article></Reveal>
+            <Reveal key={certificate.title} delay={index * 80}><article className="certificate-card" data-tour-id={certificateTourTargets[certificate.number]}><div className="certificate-top"><span>{certificate.number}</span><FiAward /></div><div className="certificate-meta"><span>{t.certificateLabels.featured}</span><span>{certificate.date}</span></div><h3>{certificate.title}</h3><h4>{certificate.issuer}</h4><p>{certificate.description[language]}</p><div className="certificate-skills"><strong>{t.certificateLabels.skills}</strong><div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></div><button className="certificate-link" type="button" onClick={(event) => openCertificate(certificate, event)}>{t.certificateLabels.view}<FiArrowUpRight /></button></article></Reveal>
           ))}</div>
           <div className="certificates-secondary">{certificates.filter((certificate) => !certificate.featured).map((certificate, index) => (
             <Reveal key={certificate.title} delay={index * 80}><article className="certificate-row"><div className="certificate-row-number">{certificate.number}</div><div className="certificate-row-copy"><span>{t.certificateLabels.complementary} · {certificate.date}</span><h3>{certificate.title}</h3><h4>{certificate.issuer}</h4><p>{certificate.description[language]}</p><div className="tag-list">{certificate.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></div><button type="button" onClick={(event) => openCertificate(certificate, event)} aria-label={`${t.certificateLabels.view}: ${certificate.title}`}><FiArrowUpRight /></button></article></Reveal>
@@ -606,20 +669,35 @@ function App() {
         {showFigma && <section className="content-section figma-section" id="figma"><SectionHeader content={t.section.figma} /><div className="figma-grid">{[1,2,3].map((item) => <article className="figma-card" key={item}><SiFigma /><span>{t.figmaSoon}</span><h3>{t.figmaTitle} 0{item}</h3><p>{t.figmaText}</p></article>)}</div></section>}
 
         <section className="blog-promo" id="blog" aria-labelledby="blog-promo-title">
-          <Reveal className="blog-promo-card">
+          <Reveal className="blog-promo-card" data-tour-id="blog">
+            <div className="blog-promo-index" aria-hidden="true"><span>FIELD<br />NOTES</span><strong>01</strong></div>
             <span className="blog-promo-icon" aria-hidden="true"><FiBookOpen /></span>
             <div className="blog-promo-copy">
               <span className="blog-promo-label">{t.blogPromo.label}</span>
               <h2 id="blog-promo-title">{t.blogPromo.title}</h2>
               <p>{t.blogPromo.description}</p>
+              <div className="promo-topic-list">{t.blogPromo.topics.map((topic) => <span key={topic}>{topic}</span>)}</div>
             </div>
             <a className="blog-promo-link" href={blogPath}>{t.blogPromo.action}<FiArrowUpRight aria-hidden="true" /></a>
           </Reveal>
         </section>
 
+        <section className="lab-promo" id="lab-preview" aria-labelledby="lab-promo-title">
+          <Reveal className="lab-promo-card" data-tour-id="lab">
+            <div className="lab-promo-visual" aria-hidden="true"><span className="lab-radar"><i /><i /><FiCpu /></span><small>{t.labPromo.status}</small></div>
+            <div className="lab-promo-copy">
+              <span className="lab-promo-label"><i />{t.labPromo.label}</span>
+              <h2 id="lab-promo-title">{t.labPromo.title}</h2>
+              <p>{t.labPromo.description}</p>
+              <div className="promo-topic-list">{t.labPromo.topics.map((topic) => <span key={topic}>{topic}</span>)}</div>
+            </div>
+            <a className="lab-promo-link" href={labPath}>{t.labPromo.action}<FiArrowUpRight aria-hidden="true" /></a>
+          </Reveal>
+        </section>
+
         <section className="content-section contact-section" id="contact">
           <SectionHeader content={t.section.contact} />
-          <div className="contact-grid"><Reveal><form className="contact-form" onSubmit={handleContact}><div className="form-row"><label><span>{t.contactForm.name}</span><input name="name" autoComplete="name" required placeholder={t.contactForm.namePlaceholder} /></label><label><span>{t.contactForm.email}</span><input name="email" autoComplete="email" type="email" required placeholder={t.contactForm.emailPlaceholder} /></label></div><label><span>{t.contactForm.subject}</span><input name="subject" required placeholder={t.contactForm.subjectPlaceholder} /></label><label><span>{t.contactForm.message}</span><textarea name="message" required rows="5" placeholder={t.contactForm.messagePlaceholder} /></label><div className="form-footer"><button type="submit">{t.contactForm.send}<FiSend /></button><small>{t.contactForm.hint}</small></div></form></Reveal><Reveal delay={80}><a className="linkedin-card" href="https://www.linkedin.com/in/angel-cardenas-abarzua-0a7380290/" target="_blank" rel="noreferrer"><FiLinkedin /><span>{t.contactForm.linkedin}</span><FiArrowUpRight /></a></Reveal></div>
+          <div className="contact-grid"><Reveal><form className="contact-form" data-tour-id="contact-form" onSubmit={handleContact}><div className="form-row"><label><span>{t.contactForm.name}</span><input name="name" autoComplete="name" required placeholder={t.contactForm.namePlaceholder} /></label><label><span>{t.contactForm.email}</span><input name="email" autoComplete="email" type="email" required placeholder={t.contactForm.emailPlaceholder} /></label></div><label><span>{t.contactForm.subject}</span><input name="subject" required placeholder={t.contactForm.subjectPlaceholder} /></label><label><span>{t.contactForm.message}</span><textarea name="message" required rows="5" placeholder={t.contactForm.messagePlaceholder} /></label><div className="form-footer"><button type="submit">{t.contactForm.send}<FiSend /></button><small>{t.contactForm.hint}</small></div></form></Reveal><Reveal delay={80}><a className="linkedin-card" data-tour-id="linkedin" href="https://www.linkedin.com/in/angel-cardenas-abarzua-0a7380290/" target="_blank" rel="noreferrer"><small>{t.contactForm.linkedinEyebrow}</small><FiLinkedin /><span>{t.contactForm.linkedin}</span><FiArrowUpRight /></a></Reveal></div>
         </section>
       </main>
       <footer><a className="footer-brand" href="#home" onClick={(event) => navigate(event, "home")}>Ángel Cárdenas<span>®</span></a><div className="footer-bottom"><span>© {new Date().getFullYear()} · {t.footer}</span><a href="#home" onClick={(event) => navigate(event, "home")}>{t.backTop}<FiArrowUpRight /></a></div></footer>
@@ -627,6 +705,7 @@ function App() {
       <PortfolioTerminal context={terminalContext} setLanguage={setLanguage} setTheme={setTheme} navigateTo={scrollTo} openSkillMap={openSkillMap} />
       {modalCertificate && <CertificateModal certificate={modalCertificate} labels={t.certificateLabels} onClose={closeCertificate} />}
       {architectureProject && <Suspense fallback={<div className="architecture-load-fallback" role="status">SYSTEM / LOADING</div>}><ProjectArchitectureExplorer key={`${architectureProject}-${architectureNode || "root"}`} projectId={architectureProject} language={language} motionEnabled={enabled} initialView={architectureView} initialNode={architectureNode} originRect={architectureOrigin} onClose={closeArchitecture} onViewChange={changeArchitectureView} /></Suspense>}
+      {tourOpen && tourAudio && <Suspense fallback={<div className="tour-load-fallback" role="status" aria-live="polite"><FiRadio aria-hidden="true" />{t.tourLoading}</div>}><TacticalTour language={language} motionEnabled={enabled} audio={tourAudio} onClose={closeTacticalTour} /></Suspense>}
     </div>
   );
 }

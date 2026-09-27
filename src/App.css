@@ -1,22 +1,58 @@
 .portfolio-shell { position: relative; isolation: isolate; overflow: clip; }
-:where(.portfolio-shell) .blog-promo { padding: 0 0 32px; }
-:where(.portfolio-shell) .blog-promo-card { display: flex; align-items: center; gap: 24px; padding: 30px 32px; border: 1px solid var(--line-strong); border-left: 3px solid var(--accent); background: linear-gradient(110deg, var(--accent-soft), transparent 75%), var(--surface); }
-:where(.portfolio-shell) .blog-promo-icon { display: grid; place-items: center; flex: 0 0 52px; width: 52px; height: 60px; color: var(--accent); border: 1px solid var(--line-strong); border-radius: 3px 12px 12px 3px; transform: rotate(-8deg); }
+:where(.portfolio-shell) .blog-promo { padding: 78px 0 14px; }
+:where(.portfolio-shell) .blog-promo-card { position: relative; isolation: isolate; overflow: hidden; display: grid; grid-template-columns: 74px 58px minmax(0, 1fr) auto; align-items: center; gap: 24px; padding: 34px 36px; border: 1px solid var(--line-strong); border-left: 3px solid var(--accent); background: linear-gradient(110deg, var(--accent-soft), transparent 62%), var(--surface); }
+:where(.portfolio-shell) .blog-promo-card::before { content: ""; position: absolute; z-index: -1; inset: 0; opacity: .15; background: repeating-linear-gradient(90deg, transparent 0 79px, var(--line-strong) 79px 80px); mask-image: linear-gradient(90deg, black, transparent 75%); }
+:where(.portfolio-shell) .blog-promo-index { align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; padding-right: 18px; border-right: 1px solid var(--line); color: var(--subtle); font: 7px/1.5 "IBM Plex Mono", monospace; letter-spacing: .12em; }
+:where(.portfolio-shell) .blog-promo-index strong { color: var(--accent); font: 42px/1 "Instrument Serif", serif; }
+:where(.portfolio-shell) .blog-promo-icon { display: grid; place-items: center; width: 52px; height: 60px; color: var(--accent); border: 1px solid var(--line-strong); border-radius: 3px 12px 12px 3px; transform: rotate(-8deg); box-shadow: 8px 8px 0 var(--accent-soft); }
 :where(.portfolio-shell) .blog-promo-icon svg { width: 25px; height: 25px; }
-:where(.portfolio-shell) .blog-promo-copy { flex: 1; min-width: 0; }
-:where(.portfolio-shell) .blog-promo-label { color: var(--accent); font: 10px/1.5 "IBM Plex Mono", monospace; letter-spacing: .12em; }
-:where(.portfolio-shell) .blog-promo-copy h2 { margin: 7px 0; font: 34px/1.1 "Instrument Serif", serif; text-wrap: balance; }
-:where(.portfolio-shell) .blog-promo-copy p { margin: 0; color: var(--muted); font-size: 13px; }
+:where(.portfolio-shell) .blog-promo-copy { min-width: 0; }
+:where(.portfolio-shell) .blog-promo-label { color: var(--accent); font: 9px/1.5 "IBM Plex Mono", monospace; letter-spacing: .12em; }
+:where(.portfolio-shell) .blog-promo-copy h2 { margin: 7px 0; font: 42px/1.05 "Instrument Serif", serif; text-wrap: balance; }
+:where(.portfolio-shell) .blog-promo-copy p { max-width: 670px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+:where(.portfolio-shell) .promo-topic-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+:where(.portfolio-shell) .promo-topic-list span { padding: 4px 7px; border: 1px solid var(--line); color: var(--subtle); font: 7px "IBM Plex Mono", monospace; letter-spacing: .06em; text-transform: uppercase; }
 :where(.portfolio-shell) .blog-promo-link { display: inline-flex; align-items: center; justify-content: center; gap: 20px; flex-shrink: 0; min-height: 48px; padding: 12px 20px; background: var(--accent); color: var(--bg); font-size: 12px; font-weight: 600; transition: background 180ms ease; }
 :where(.portfolio-shell) .blog-promo-link svg { width: 18px; height: 18px; transition: transform 180ms ease; }
 :where(.portfolio-shell) .blog-promo-link:hover, :where(.portfolio-shell) .blog-promo-link:focus-visible { background: var(--accent-strong); }
 :where(.portfolio-shell) .blog-promo-link:hover svg, :where(.portfolio-shell) .blog-promo-link:focus-visible svg { transform: translate(2px, -2px); }
+
+:where(.portfolio-shell) .lab-promo { padding: 14px 0 40px; }
+:where(.portfolio-shell) .lab-promo-card { position: relative; isolation: isolate; overflow: hidden; display: grid; grid-template-columns: 220px minmax(0, 1fr) auto; align-items: center; gap: 36px; min-height: 260px; padding: 32px 38px; border: 1px solid #54e49b73; background: radial-gradient(circle at 12% 50%, #1a704334, transparent 30%), repeating-linear-gradient(0deg, transparent 0 4px, #54e49b08 4px 5px), #031009; color: #dff8e9; box-shadow: inset 0 0 70px #0007; }
+:where(.portfolio-shell) .lab-promo-card::before { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(100deg, transparent 45%, #54e49b08, transparent 72%); transform: translateX(-100%); animation: lab-promo-scan 7s ease-in-out infinite; }
+:where(.portfolio-shell) .lab-promo-visual { min-width: 0; display: grid; place-items: center; gap: 14px; }
+:where(.portfolio-shell) .lab-radar { position: relative; width: 138px; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid #54e49b69; border-radius: 50%; box-shadow: 0 0 32px #54e49b17, inset 0 0 25px #54e49b10; }
+:where(.portfolio-shell) .lab-radar::before, :where(.portfolio-shell) .lab-radar::after { content: ""; position: absolute; border: 1px dashed #54e49b3d; border-radius: 50%; }
+:where(.portfolio-shell) .lab-radar::before { inset: 18%; }
+:where(.portfolio-shell) .lab-radar::after { inset: 38%; }
+:where(.portfolio-shell) .lab-radar i:first-child { position: absolute; left: 50%; top: 50%; width: 48%; height: 1px; transform-origin: left; background: linear-gradient(90deg, #54e49b, transparent); animation: lab-radar-turn 4s linear infinite; }
+:where(.portfolio-shell) .lab-radar i:nth-child(2) { position: absolute; right: 18%; top: 27%; width: 6px; height: 6px; border-radius: 50%; background: #54e49b; box-shadow: 0 0 12px #54e49b; animation: status-pulse 1.5s ease-in-out infinite; }
+:where(.portfolio-shell) .lab-radar svg { position: relative; z-index: 2; width: 29px; height: 29px; color: #54e49b; filter: drop-shadow(0 0 9px #54e49b66); }
+:where(.portfolio-shell) .lab-promo-visual small { color: #77a78c; font: 7px "IBM Plex Mono", monospace; letter-spacing: .12em; }
+:where(.portfolio-shell) .lab-promo-copy { min-width: 0; }
+:where(.portfolio-shell) .lab-promo-label { display: flex; align-items: center; gap: 9px; color: #54e49b; font: 8px "IBM Plex Mono", monospace; letter-spacing: .13em; }
+:where(.portfolio-shell) .lab-promo-label i { width: 6px; height: 6px; border-radius: 50%; background: #54e49b; box-shadow: 0 0 9px #54e49b; }
+:where(.portfolio-shell) .lab-promo-copy h2 { margin: 12px 0 9px; color: #f0fff6; font: 48px/1 "Instrument Serif", serif; }
+:where(.portfolio-shell) .lab-promo-copy p { max-width: 650px; margin: 0; color: #94b5a1; font-size: 13px; line-height: 1.75; }
+:where(.portfolio-shell) .lab-promo-card .promo-topic-list span { border-color: #54e49b34; color: #88b69a; }
+:where(.portfolio-shell) .lab-promo-link { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 50px; padding: 12px 20px; border: 1px solid #54e49b; background: #54e49b; color: #031009; font-size: 11px; font-weight: 700; transition: transform 180ms ease, background 180ms ease; }
+:where(.portfolio-shell) .lab-promo-link:hover, :where(.portfolio-shell) .lab-promo-link:focus-visible { transform: translateY(-4px); background: #caffdf; }
+@keyframes lab-radar-turn { to { transform: rotate(360deg); } }
+@keyframes lab-promo-scan { 50%, 100% { transform: translateX(100%); } }
 @media (max-width: 760px) {
-  :where(.portfolio-shell) .blog-promo-card { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 18px; padding: 24px 20px; }
+  :where(.portfolio-shell) .blog-promo { padding-top: 52px; }
+  :where(.portfolio-shell) .blog-promo-card { grid-template-columns: 36px minmax(0, 1fr); gap: 18px; padding: 24px 20px; }
+  :where(.portfolio-shell) .blog-promo-index { display: none; }
   :where(.portfolio-shell) .blog-promo-icon { width: 36px; height: 44px; align-self: start; margin-top: 5px; }
   :where(.portfolio-shell) .blog-promo-icon svg { width: 20px; height: 20px; }
   :where(.portfolio-shell) .blog-promo-copy h2 { font-size: 29px; }
   :where(.portfolio-shell) .blog-promo-link { grid-column: 1 / -1; justify-self: start; }
+  :where(.portfolio-shell) .lab-promo-card { grid-template-columns: 76px minmax(0, 1fr); gap: 18px; min-height: 0; padding: 24px 20px; }
+  :where(.portfolio-shell) .lab-radar { width: 70px; }
+  :where(.portfolio-shell) .lab-radar svg { width: 20px; height: 20px; }
+  :where(.portfolio-shell) .lab-promo-visual small { display: none; }
+  :where(.portfolio-shell) .lab-promo-copy h2 { font-size: 33px; }
+  :where(.portfolio-shell) .lab-promo-link { grid-column: 1 / -1; justify-self: start; }
 }
 :where(.portfolio-shell) .ambient-background { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; contain: strict; }
 :where(.portfolio-shell) .ambient-shape { position: absolute; width: min(650px, 85vw); aspect-ratio: 1; border: 1px solid var(--accent); border-radius: 50%; opacity: .055; }
@@ -28,9 +64,16 @@
 :where(.portfolio-shell) .brand-mark { font: italic 48px/.7 "Instrument Serif", serif; letter-spacing: -.08em; }
 :where(.portfolio-shell) .brand-mark > span { font: 10px "IBM Plex Mono", monospace; color: var(--accent); vertical-align: top; margin-left: 5px; }
 :where(.portfolio-shell) .main-nav { display: flex; gap: 26px; margin: auto; }
-:where(.portfolio-shell) .header-lab-link { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font: 700 9px "IBM Plex Mono", monospace; letter-spacing: .12em; }
-:where(.portfolio-shell) .header-lab-link i { width: 6px; height: 6px; border: 1px solid var(--accent); transform: rotate(45deg); }
-:where(.portfolio-shell) .header-lab-link:hover, :where(.portfolio-shell) .header-lab-link:focus-visible { color: var(--accent); }
+:where(.portfolio-shell) .header-tour-button { position: relative; min-height: 34px; display: inline-flex; align-items: center; gap: 8px; padding: 0 11px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); background: var(--accent-soft); color: var(--accent); font: 700 8px "IBM Plex Mono", monospace; letter-spacing: .12em; }
+:where(.portfolio-shell) .header-tour-button::before { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%); transform: translateX(-120%); transition: transform 420ms ease; }
+:where(.portfolio-shell) .header-tour-button:hover::before, :where(.portfolio-shell) .header-tour-button:focus-visible::before { transform: translateX(120%); }
+:where(.portfolio-shell) .header-tour-button svg { position: relative; width: 14px; height: 14px; }
+:where(.portfolio-shell) .header-tour-button span { position: relative; }
+:where(.portfolio-shell) .header-tour-button > i { position: relative; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 9px var(--accent); animation: status-pulse 1.3s ease-in-out infinite; }
+:where(.portfolio-shell) .header-lab-link { min-height: 34px; display: inline-flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); background: linear-gradient(105deg, var(--accent-soft), transparent); color: var(--accent); font: 700 8px "IBM Plex Mono", monospace; letter-spacing: .12em; transition: border-color 180ms ease, transform 180ms ease; }
+:where(.portfolio-shell) .header-lab-link > svg { width: 13px; height: 13px; filter: drop-shadow(0 0 6px var(--accent)); }
+:where(.portfolio-shell) .header-lab-link i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 9px var(--accent); animation: status-pulse 1.3s ease-in-out infinite; }
+:where(.portfolio-shell) .header-lab-link:hover, :where(.portfolio-shell) .header-lab-link:focus-visible { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 :where(.portfolio-shell) .main-nav a { position: relative; padding: 10px 0; color: var(--muted); font-size: 12px; }
 :where(.portfolio-shell) .main-nav a::after { content: ""; position: absolute; bottom: 3px; left: 0; width: 100%; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 200ms ease; }
 :where(.portfolio-shell) .main-nav a[aria-current], :where(.portfolio-shell) .main-nav a:hover, :where(.portfolio-shell) .main-nav a:focus-visible { color: var(--text); }
@@ -59,6 +102,8 @@
 :where(.portfolio-shell) .hero-intro { font-size: clamp(17px, 1.6vw, 21px); line-height: 1.55; letter-spacing: -.02em; margin: 0; }
 :where(.portfolio-shell) .hero-muted { font-size: 13px; line-height: 1.7; color: var(--muted); max-width: 490px; margin: 17px 0 0; }
 :where(.portfolio-shell) .hero-actions { display: flex; align-items: center; gap: 27px; margin-top: 30px; }
+:where(.portfolio-shell) .hero-tour-button { display: none !important; padding: 0; background: transparent; color: var(--accent); font: 700 9px "IBM Plex Mono", monospace; letter-spacing: .07em; text-transform: uppercase; }
+:where(.portfolio-shell) .hero-tour-button svg { flex: 0 0 auto; width: 16px; height: 16px; }
 :where(.portfolio-shell) .primary-button, :where(.portfolio-shell) .text-button { min-height: 48px; display: inline-flex; justify-content: space-between; align-items: center; gap: 28px; font-size: 12px; font-weight: 500; }
 :where(.portfolio-shell) .primary-button { padding: 0 22px; background: var(--accent); color: var(--bg); transition: transform 200ms ease; }
 :root[data-theme="light"] :where(.portfolio-shell) .primary-button { color: white; }
@@ -145,6 +190,8 @@
 :where(.portfolio-shell) .architecture-link:hover .architecture-link-mark i:nth-child(1), :where(.portfolio-shell) .architecture-link:focus-visible .architecture-link-mark i:nth-child(1) { transform: translateY(-3px); }
 :where(.portfolio-shell) .architecture-link:hover .architecture-link-mark i:nth-child(3), :where(.portfolio-shell) .architecture-link:focus-visible .architecture-link-mark i:nth-child(3) { transform: translateY(3px); }
 :where(.portfolio-shell) .architecture-load-fallback { position: fixed; inset: 0; z-index: 449; display: grid; place-items: center; background: var(--bg); color: var(--accent); font: 10px "IBM Plex Mono", monospace; letter-spacing: .14em; }
+:where(.portfolio-shell) .tour-load-fallback { position: fixed; z-index: 1000; inset: 0; display: flex; align-items: center; justify-content: center; gap: 12px; background: #010704f2; color: #54e49b; font: 9px "IBM Plex Mono", monospace; letter-spacing: .14em; }
+:where(.portfolio-shell) .tour-load-fallback svg { width: 20px; height: 20px; animation: status-pulse .8s ease-in-out infinite; }
 :where(.portfolio-shell) .project-slot-1 .project-card, :where(.portfolio-shell) .project-slot-6 .project-card { display: grid; grid-template-columns: 1.5fr 1fr; border: 1px solid var(--line); }
 :where(.portfolio-shell) .project-slot-1 .project-body, :where(.portfolio-shell) .project-slot-6 .project-body { padding: 35px; align-self: center; }
 :where(.portfolio-shell) .project-slot-1 .project-visual, :where(.portfolio-shell) .project-slot-6 .project-visual { display: flex; flex-direction: column; min-height: 440px; padding: 26px 32px 0; }
@@ -233,7 +280,8 @@
 :where(.portfolio-shell) .form-footer button:hover, :where(.portfolio-shell) .form-footer button:focus-visible { transform: translateY(-4px); }
 :where(.portfolio-shell) .form-footer small { max-width: 270px; font-size: 10px; color: var(--subtle); }
 :where(.portfolio-shell) .linkedin-card { display: flex; flex-direction: column; justify-content: space-between; gap: 30px; min-height: 100%; padding: 28px; border: 1px solid var(--line); background: var(--accent-soft); transition: transform 200ms ease; }
-:where(.portfolio-shell) .linkedin-card > svg:first-child { font-size: 33px; color: var(--accent); }
+:where(.portfolio-shell) .linkedin-card > small { color: var(--accent); font: 8px "IBM Plex Mono", monospace; letter-spacing: .12em; }
+:where(.portfolio-shell) .linkedin-card > svg:nth-of-type(1) { font-size: 33px; color: var(--accent); }
 :where(.portfolio-shell) .linkedin-card > span { font: 40px/1.08 "Instrument Serif", serif; }
 :where(.portfolio-shell) .linkedin-card > svg:last-child { align-self: flex-end; width: 42px; height: 42px; color: var(--accent); }
 :where(.portfolio-shell) .linkedin-card:hover, :where(.portfolio-shell) .linkedin-card:focus-visible { transform: translateY(-4px); border-color: var(--accent); }
@@ -255,6 +303,7 @@
   :where(.portfolio-shell) .header-inner { gap: 24px; width: calc(100% - 48px); }
   :where(.portfolio-shell) .main-nav { gap: 15px; }
   :where(.portfolio-shell) .main-nav a { font-size: 11px; }
+  :where(.portfolio-shell) .header-tour-button { padding-inline: 9px; }
   :where(.portfolio-shell) main, :where(.portfolio-shell) footer { width: calc(100% - 64px); }
   :where(.portfolio-shell) .hero h1 { font-size: 13.5vw; }
   :where(.portfolio-shell) .hero h1 em { margin-left: 20px; }
@@ -277,6 +326,7 @@
   :where(.portfolio-shell) .header-inner { min-height: 70px; }
   :where(.portfolio-shell) .header-actions { margin-left: auto; }
   :where(.portfolio-shell) .menu-button { display: inline-flex; }
+  :where(.portfolio-shell) .header-tour-button { display: none; }
   :where(.portfolio-shell) .main-nav { display: none; position: absolute; top: 70px; left: 0; right: 0; flex-direction: column; gap: 0; padding: 16px 28px 24px; background: var(--bg); border-bottom: 1px solid var(--line-strong); }
   :where(.portfolio-shell) .main-nav.is-open { display: flex; animation: modal-enter 200ms ease-out; }
   :where(.portfolio-shell) .main-nav a { font-size: 15px; padding: 12px 0; }
@@ -284,6 +334,8 @@
   :where(.portfolio-shell) .hero-layout { gap: 12px; }
   :where(.portfolio-shell) .hero-role { font-size: 10px; }
   :where(.portfolio-shell) .hero-muted { font-size: 12px; }
+  :where(.portfolio-shell) .hero-actions { flex-wrap: wrap; }
+  :where(.portfolio-shell) .hero-tour-button { display: none; }
   :where(.portfolio-shell) .profile-caption p { font-size: 25px; }
   :where(.portfolio-shell) .portrait-cross { font-size: 46px; }
   :where(.portfolio-shell) .social-row > span { font-size: 8px; }
@@ -374,7 +426,9 @@
   :where(.portfolio-shell) .footer-brand > span { font-size: 10px; margin-top: 8px; }
 }
 @media (max-width: 420px) {
-  :where(.portfolio-shell) .header-inner { width: calc(100% - 32px); }
+  :where(.portfolio-shell) .header-inner { width: calc(100% - 32px); gap: 10px; }
+  :where(.portfolio-shell) .header-lab-link { width: 36px; height: 36px; min-height: 36px; justify-content: center; padding: 0; }
+  :where(.portfolio-shell) .header-lab-link span, :where(.portfolio-shell) .header-lab-link i { display: none; }
   :where(.portfolio-shell) .utility-button { width: 36px; }
   :where(.portfolio-shell) .hero { padding-top: 25px; }
   :where(.portfolio-shell) .hero h1 { font-size: 22vw; }
